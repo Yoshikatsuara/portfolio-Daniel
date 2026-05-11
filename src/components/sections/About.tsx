@@ -2,7 +2,7 @@ import { profile } from "@/content/profile";
 
 export default function About() {
   return (
-    <section id="sobre" className="py-24 md:py-32 px-6 md:px-16 lg:px-24 bg-bg-surface">
+    <section id="sobre-details" className="py-24 md:py-32 px-6 md:px-16 lg:px-24 bg-bg-surface">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center lg:items-start">
         
         {/* Lado Esquerdo: Foto */}

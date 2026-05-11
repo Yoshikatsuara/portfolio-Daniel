@@ -42,6 +42,8 @@ export default function SplitText({ children, className = "" }: SplitTextProps) 
             scrollTrigger: {
               trigger: containerRef.current,
               start: "top 85%",
+              end: "bottom 15%",
+              toggleActions: "play reverse play reverse"
             }
           }
         );

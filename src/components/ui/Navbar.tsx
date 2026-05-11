@@ -12,8 +12,28 @@ if (typeof window !== "undefined") {
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["sobre", "cases", "stack", "contato"];
+      let current = "";
+      sections.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= window.innerHeight / 2.5 && rect.bottom >= window.innerHeight / 2.5) {
+            current = id;
+          }
+        }
+      });
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Chama imediatamente para setar inicial
+    handleScroll();
+
     // Força o scroll pro topo ao recarregar a página
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
@@ -34,10 +54,13 @@ export default function Navbar() {
     );
 
     observer.observe(triggerElement);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
-  const navLinks = ["Cases", "Sobre", "Stack", "Contato"];
+  const navLinks = ["Sobre", "Cases", "Stack", "Contato"];
 
   return (
     <>
@@ -55,16 +78,32 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a key={link} href={`#${link.toLowerCase()}`} className="font-sans text-sm font-medium text-text-secondary hover:text-accent hover:-translate-y-[1px] transition-all duration-250">
-                {link}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const id = link.toLowerCase();
+              const isActive = activeSection === id;
+              return (
+                <a 
+                  key={link} 
+                  href={`#${id}`} 
+                  className={`font-sans text-sm font-medium transition-all duration-250 ${
+                    isActive 
+                      ? "text-accent border-b-2 border-accent pb-1" 
+                      : "text-text-secondary hover:text-accent hover:-translate-y-[1px]"
+                  }`}
+                >
+                  {link}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:block">
-            <MagneticButton variant="primary" className="!px-6 !py-2.5 !text-sm !rounded-full">
+            <MagneticButton 
+              variant="primary" 
+              className="!px-6 !py-2.5 !text-sm !rounded-full"
+              onClick={() => gsap.to(window, { duration: 1.5, scrollTo: "#contato", ease: "power3.inOut" })}
+            >
               Trabalhar comigo
             </MagneticButton>
           </div>
@@ -100,7 +139,11 @@ export default function Navbar() {
             </a>
           ))}
           <div className="mt-8">
-             <MagneticButton variant="primary" className="w-full !rounded-[2rem]">
+             <MagneticButton 
+               variant="primary" 
+               className="w-full !rounded-[2rem]"
+               onClick={() => { setIsMobileMenuOpen(false); gsap.to(window, { duration: 1.5, scrollTo: "#contato", ease: "power3.inOut" }); }}
+             >
                Trabalhar comigo
              </MagneticButton>
           </div>
