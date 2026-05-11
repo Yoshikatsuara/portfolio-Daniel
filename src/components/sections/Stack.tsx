@@ -21,6 +21,7 @@ export default function Stack() {
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top 80%",
+            toggleActions: "play reverse play reverse"
           }
         });
       } else {
@@ -36,6 +37,7 @@ export default function Stack() {
             scrollTrigger: {
               trigger: containerRef.current,
               start: "top 80%",
+              toggleActions: "play reverse play reverse"
             }
           }
         );

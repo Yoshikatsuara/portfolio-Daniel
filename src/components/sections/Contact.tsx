@@ -29,6 +29,7 @@ export default function Contact() {
             scrollTrigger: {
               trigger: containerRef.current,
               start: "top 75%",
+              toggleActions: "play reverse play reverse"
             }
           }
         );
@@ -45,6 +46,7 @@ export default function Contact() {
             scrollTrigger: {
               trigger: containerRef.current,
               start: "top 75%",
+              toggleActions: "play reverse play reverse"
             }
           }
         );
