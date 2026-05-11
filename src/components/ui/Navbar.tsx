@@ -1,13 +1,25 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import MagneticButton from "./MagneticButton";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowUp } from "lucide-react";
+import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollToPlugin);
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    // Força o scroll pro topo ao recarregar a página
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+
     // Usando IntersectionObserver para monitorar o final do Hero
     // Colocamos uma div vazia no final do Hero com id "hero-end-trigger"
     const triggerElement = document.getElementById("hero-end-trigger");
@@ -34,9 +46,12 @@ export default function Navbar() {
       }`}>
         <div className="flex items-center justify-between md:gap-12">
           {/* Logo */}
-          <a href="#" className="font-mono text-sm tracking-[0.15em] font-medium uppercase text-text-primary">
-            DANIEL ARA
-          </a>
+          <button 
+            onClick={() => gsap.to(window, { duration: 1.5, scrollTo: 0, ease: "power3.inOut" })} 
+            className="font-mono text-sm tracking-[0.1em] font-medium text-text-primary outline-none hover:text-accent transition-colors"
+          >
+            DANIEL DAMASCENO
+          </button>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -68,7 +83,12 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       <div className={`fixed inset-0 z-50 bg-bg-surface/95 backdrop-blur-xl transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"} md:hidden flex flex-col`}>
         <div className="flex items-center justify-between p-6 border-b border-border">
-          <span className="font-mono text-sm tracking-[0.15em] font-medium uppercase text-text-primary">DANIEL ARA</span>
+          <button 
+            onClick={() => { setIsMobileMenuOpen(false); gsap.to(window, { duration: 1.5, scrollTo: 0, ease: "power3.inOut" }); }} 
+            className="font-mono text-sm tracking-[0.1em] font-medium text-text-primary outline-none"
+          >
+            DANIEL DAMASCENO
+          </button>
           <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Fechar menu" className="p-2 -mr-2 text-text-primary outline-none focus-visible:text-accent">
             <X size={24} />
           </button>
@@ -86,6 +106,17 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Floating Back to Top Button */}
+      <button
+        onClick={() => gsap.to(window, { duration: 1.5, scrollTo: 0, ease: "power3.inOut" })}
+        className={`fixed bottom-6 right-6 md:bottom-10 md:right-10 z-50 p-4 rounded-full bg-bg-surface/80 backdrop-blur-md border border-border text-text-secondary transition-all duration-500 hover:text-accent hover:border-accent hover:scale-110 shadow-2xl ${
+          isScrolled ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-12 pointer-events-none"
+        }`}
+        aria-label="Voltar ao topo"
+      >
+        <ArrowUp size={20} />
+      </button>
     </>
   );
 }
