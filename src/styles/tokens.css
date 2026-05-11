@@ -1,0 +1,11 @@
+:root {
+  --bg-primary:    #0D0D12;  /* Obsidiana — background base */
+  --bg-surface:    #14141B;  /* Cards e elevações */
+  --bg-elevated:   #1C1C26;  /* Modais, dropdowns */
+  --border:        #2A2A35;  /* Bordas sutis */
+  --text-primary:  #FAF8F5;  /* Marfim — texto principal */
+  --text-secondary:#A8A8B3;  /* Texto secundário */
+  --text-muted:    #6B6B78;  /* Captions, metadata */
+  --accent:        #3B5BFF;  /* Royal Electric — CTA, destaques */
+  --accent-glow:   #3B5BFF40;/* Glow do accent (40 = 25% opacidade) */
+}

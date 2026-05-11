@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Daniel Ara · Customer Success Analyst (Portfólio)
 
-## Getting Started
+Portfólio pessoal focado em dados e relacionamento com cliente, projetado como um instrumento digital de prova técnica. Apresenta cases reais e métricas de impacto no formato STAR, construído com foco em legibilidade, contraste e fluidez cinematográfica (Midnight Luxe Adapted).
 
-First, run the development server:
+## 🛠 Stack Tecnológica
+- **Framework:** Next.js 16 (App Router)
+- **Estilização:** Tailwind CSS v4
+- **Animações:** GSAP 3 + ScrollTrigger
+- **Linguagem:** TypeScript
 
+## 🚀 Como Rodar Localmente
+
+1. Instale as dependências:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Rode o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Para criar a build otimizada de produção:
+```bash
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📂 Estrutura do Projeto
 
-## Learn More
+- `src/app/`: Rotas principais (`/`, `/styleguide`), metadados, sitemap e tokens de tema globais.
+- `src/components/sections/`: O esqueleto da aplicação dividido em módulos lógicos (Hero, Cases, Stack, Philosophy, About, Contact, Footer).
+- `src/components/ui/`: Micro-componentes reaproveitáveis de alta interação visual (MagneticButton, Badge, Navbar).
+- `src/components/animations/`: Componentes que envolvem lógicas ricas de animação (`SplitText.tsx`).
+- `src/content/`: Fonte de dados reais. Constantes fortemente tipadas contendo a trajetória profissional (`profile.ts`, `stack.ts`, `cases.ts`).
 
-To learn more about Next.js, take a look at the following resources:
+## 🌐 Deploy
+**[Em breve]**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Built with Claude (Opus 4.7) + Antigravity*
