@@ -55,10 +55,11 @@ export default function Cases() {
             scrollTrigger: {
               trigger: card,
               start: "top 85%",
-              toggleActions: "play reverse play reverse"
+              toggleActions: "play none none reverse"
             }
           });
         } else {
+          // 1) Animação de Entrada fluida (quando o card vem de baixo)
           gsap.fromTo(
             card,
             { x: xOffset, opacity: 0 },
@@ -70,7 +71,31 @@ export default function Cases() {
               scrollTrigger: {
                 trigger: card,
                 start: "top 85%",
-                toggleActions: "play reverse play reverse"
+                toggleActions: "play none none reverse"
+              }
+            }
+          );
+          
+          // 2) Animação de Saída com Profundidade (quando o card vai saindo pelo topo, via scrub)
+          gsap.fromTo(card,
+            {
+              scale: 1,
+              opacity: 1,
+              filter: "blur(0px)",
+              y: 0,
+            },
+            {
+              scale: 0.92,
+              opacity: 0,
+              filter: "blur(4px)",
+              y: -40,
+              ease: "none",
+              immediateRender: false,
+              scrollTrigger: {
+                trigger: card,
+                start: "top 20%",
+                end: "bottom top",
+                scrub: true,
               }
             }
           );
