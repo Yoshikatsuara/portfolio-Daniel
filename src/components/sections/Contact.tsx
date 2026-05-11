@@ -73,10 +73,9 @@ export default function Contact() {
             </p>
 
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-10">
-              {/* TODO: Daniel adiciona o PDF em public/ */}
-              <MagneticButton variant="primary" className="w-full sm:w-auto opacity-50 cursor-not-allowed" disabled>
-                Baixar CV (PT)
-              </MagneticButton>
+              <a href={profile.cvPt} download>
+                <MagneticButton variant="primary" className="w-full sm:w-auto">Baixar CV (PT)</MagneticButton>
+              </a>
               {profile.cvEn ? (
                 <a href={profile.cvEn} download>
                   <MagneticButton variant="ghost" className="w-full sm:w-auto">Download CV (EN)</MagneticButton>
