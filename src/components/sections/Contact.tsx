@@ -113,9 +113,6 @@ export default function Contact() {
               <a href={profile.whatsapp} target="_blank" rel="noopener noreferrer">
                 <MagneticButton variant="primary" className="w-full sm:w-auto">WhatsApp</MagneticButton>
               </a>
-              <a href="#">
-                <MagneticButton variant="ghost" className="w-full sm:w-auto">Workana</MagneticButton>
-              </a>
               <a href={`mailto:${profile.email}`}>
                 <MagneticButton variant="ghost" className="w-full sm:w-auto">Email</MagneticButton>
               </a>

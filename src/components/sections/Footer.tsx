@@ -44,7 +44,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="font-sans text-sm text-text-secondary hover:text-accent transition-colors">
+                <a href="https://github.com/Yoshikatsuara" target="_blank" rel="noopener noreferrer" className="font-sans text-sm text-text-secondary hover:text-accent transition-colors">
                   GitHub
                 </a>
               </li>
