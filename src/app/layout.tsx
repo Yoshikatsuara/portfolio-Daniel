@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { inter, playfair, jetbrains } from "@/lib/fonts";
 import "./globals.css";
 import NoiseOverlay from "@/components/ui/NoiseOverlay";
@@ -14,6 +16,8 @@ export default function RootLayout({
       <body className="antialiased selection:bg-accent selection:text-text-primary">
         <NoiseOverlay />
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
