@@ -77,17 +77,17 @@ export default function Cases() {
           );
           
           // 2) Animação de Saída com Profundidade (quando o card vai saindo pelo topo, via scrub)
+          // Apenas transform/opacity (compositáveis na GPU) para manter 60fps no scrub.
+          // O blur foi removido: animar filter() por frame mata o framerate durante a rolagem.
           gsap.fromTo(card,
             {
               scale: 1,
               opacity: 1,
-              filter: "blur(0px)",
               y: 0,
             },
             {
               scale: 0.92,
               opacity: 0,
-              filter: "blur(4px)",
               y: -40,
               ease: "none",
               immediateRender: false,

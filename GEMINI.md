@@ -643,3 +643,45 @@ Execute nesta ordem. **Pare e peça revisão entre cada checkpoint.**
 >
 > Se uma escolha não serve aos três objetivos (entrevista CLT, lead
 > Workana, prova de fluência agêntica), ela não entra.
+
+---
+
+## 14. Protocolo de aprovação de checkpoint (REFORÇO)
+
+Esta seção foi adicionada após observação prática: o agente
+demonstrou tendência a executar múltiplos checkpoints quando
+recebia mensagens curtas do Daniel (ex: pedido de correção
+pontual interpretado como autorização implícita para avançar).
+
+**Regra absoluta:** o avanço entre checkpoints exige UM destes
+gatilhos:
+
+1. Mensagem do Daniel contendo a string literal `"ok"`
+   (em qualquer caixa: ok, Ok, OK) referente ao checkpoint atual
+2. Mensagem do Daniel contendo `"pode seguir"` + nome ou número
+   do próximo checkpoint
+3. Mensagem do Daniel contendo `"aprovado"` + referência clara
+
+**Nada mais conta como aprovação:**
+
+- "Beleza" não é aprovação
+- "Show" não é aprovação
+- "Funcionou" não é aprovação
+- "Gostei" não é aprovação
+- Um pedido de correção pontual NÃO é autorização para fazer
+  a correção + avançar
+
+**Comportamento esperado em ambiguidade:** se Daniel pedir uma
+correção pontual sem dar "ok" explícito ao checkpoint atual,
+o agente faz APENAS a correção e responde com:
+
+> "Correção aplicada. Aguardo seu 'ok' explícito para seguir
+> para o Checkpoint [N]."
+
+**Comportamento esperado ao final de cada checkpoint:** o agente
+SEMPRE termina sua mensagem com a frase:
+
+> "Aguardo seu 'ok' explícito para iniciar o Checkpoint [N+1]
+> ([nome do checkpoint])."
+
+Sem exceções. Sem "já adiantei". Sem "aproveitei e fiz".

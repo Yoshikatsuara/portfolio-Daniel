@@ -1,6 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function Philosophy() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -80,10 +85,27 @@ export default function Philosophy() {
     if (prefersReducedMotion) return;
 
     const ctx = gsap.context(() => {
-      gsap.to(glowRef.current, { opacity: 0.28, duration: 2, yoyo: true, repeat: -1, ease: "power1.inOut" });
-      gsap.to(hexOuterRef.current, { rotation: 360, duration: 15, repeat: -1, ease: "none", transformOrigin: "center center" });
-      gsap.to(hexInnerRef.current, { rotation: -360, duration: 10, repeat: -1, ease: "none", transformOrigin: "center center" });
-      gsap.to(".pulse-accent", { opacity: 0.7, duration: 1.5, yoyo: true, repeat: -1, ease: "power1.inOut" });
+      // Animações infinitas de ambiente. Coletadas para pausar quando a seção sai da tela.
+      const loops = [
+        gsap.to(glowRef.current, { opacity: 0.28, duration: 2, yoyo: true, repeat: -1, ease: "power1.inOut" }),
+        gsap.to(hexOuterRef.current, { rotation: 360, duration: 15, repeat: -1, ease: "none", transformOrigin: "center center" }),
+        gsap.to(hexInnerRef.current, { rotation: -360, duration: 10, repeat: -1, ease: "none", transformOrigin: "center center" }),
+        gsap.to(".pulse-accent", { opacity: 0.7, duration: 1.5, yoyo: true, repeat: -1, ease: "power1.inOut" }),
+      ];
+
+      // Pausa as animações quando a seção não está visível, liberando a main-thread
+      // durante a rolagem das outras seções (evita jank fora do Philosophy).
+      const visibilityTrigger = ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        onToggle: (self) => {
+          if (self.isActive) loops.forEach((t) => t.play());
+          else loops.forEach((t) => t.pause());
+        },
+      });
+      // Aplica o estado inicial (caso a seção já comece fora da viewport).
+      if (!visibilityTrigger.isActive) loops.forEach((t) => t.pause());
 
       const handleMouseMove = (e: MouseEvent) => {
         if (sectionRef.current) {
