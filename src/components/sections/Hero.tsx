@@ -59,7 +59,7 @@ export default function Hero() {
         
         <p className="hero-anim opacity-0 font-sans text-[1.125rem] md:text-[1.25rem] leading-[1.7] text-text-secondary max-w-2xl mb-12">
           Customer Success Analyst com pegada analítica. Três anos transformando
-          operação de retail digital em conversa útil com cliente — Amazon,
+          operação de retail digital em conversa útil com cliente: Amazon,
           Mercado Livre, ciclo de renovação, treinamento de time.
         </p>
 

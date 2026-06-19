@@ -225,7 +225,7 @@ export default function Cases() {
               <div className="w-[60px] h-[0.5px] bg-accent opacity-40"></div>
             </div>
             <h3 className="font-sans font-bold text-text-primary text-[clamp(2.5rem,5vw,3rem)] leading-none tracking-[-0.03em]">
-              Os Trabalhos.
+              Melhores execuções
             </h3>
           </div>
 
@@ -340,7 +340,7 @@ export default function Cases() {
                 {!isLast && (
                   <div className="case-indicator opacity-0 w-full flex justify-center py-[16px]">
                     <span className="font-mono text-[12px] text-text-muted tracking-[3px] uppercase text-center">
-                      ↓ CASE_{String(index + 2).padStart(2, "0")} — {cases[index + 1].client.split('·')[0].trim()}
+                      ↓ CASE_{String(index + 2).padStart(2, "0")} · {cases[index + 1].client.split('·')[0].trim()}
                     </span>
                   </div>
                 )}

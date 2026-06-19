@@ -38,9 +38,12 @@ export default function About() {
               {lang === "pt" ? "EN" : "PT"}
             </button>
           </div>
-          <h3 className="font-sans font-bold tracking-[-0.03em] text-[clamp(2.5rem,5vw,4rem)] leading-tight text-text-primary mb-8 md:mb-12">
+          <h3 className="font-sans font-bold tracking-[-0.03em] text-[clamp(2.5rem,5vw,4rem)] leading-tight text-text-primary mb-2">
             {profile.shortName}
           </h3>
+          <p className="font-mono text-text-muted text-sm uppercase tracking-[0.15em] mb-8 md:mb-12">
+            {profile.name}
+          </p>
 
           <div className="space-y-6 font-sans text-[1.125rem] leading-[1.7] text-text-secondary mb-16">
             {paragraphs.map((paragraph, index) => (

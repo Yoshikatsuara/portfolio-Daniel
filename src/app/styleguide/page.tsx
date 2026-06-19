@@ -27,35 +27,35 @@ export default function Styleguide() {
           
           <div className="space-y-16">
             <div>
-              <p className="font-mono text-text-muted text-sm mb-4">Hero Principal — 800, tracking -0.04em</p>
+              <p className="font-mono text-text-muted text-sm mb-4">Hero Principal · 800, tracking -0.04em</p>
               <h1 className="font-sans font-extrabold tracking-[-0.04em] text-[clamp(3rem,8vw,7rem)] leading-none">
                 Dados que viram
               </h1>
             </div>
             
             <div>
-              <p className="font-mono text-text-muted text-sm mb-4">Hero Drama — Serif Italic, 400</p>
+              <p className="font-mono text-text-muted text-sm mb-4">Hero Drama · Serif Italic, 400</p>
               <h1 className="font-serif italic font-normal text-[clamp(3.5rem,9vw,8rem)] leading-none">
                 decisão.
               </h1>
             </div>
 
             <div>
-              <p className="font-mono text-text-muted text-sm mb-4">H2 — 700, tracking -0.03em</p>
+              <p className="font-mono text-text-muted text-sm mb-4">H2 · 700, tracking -0.03em</p>
               <h2 className="font-sans font-bold tracking-[-0.03em] text-[clamp(2rem,5vw,3.5rem)] leading-tight">
                 A maioria foca em dashboards bonitos.
               </h2>
             </div>
 
             <div>
-              <p className="font-mono text-text-muted text-sm mb-4">H3 — 600</p>
+              <p className="font-mono text-text-muted text-sm mb-4">H3 · 600</p>
               <h3 className="font-sans font-semibold text-[clamp(1.5rem,3vw,2rem)] leading-snug">
                 Customer Success
               </h3>
             </div>
 
             <div>
-              <p className="font-mono text-text-muted text-sm mb-4">Body Lg — 400, line-height 1.7</p>
+              <p className="font-mono text-text-muted text-sm mb-4">Body Lg · 400, line-height 1.7</p>
               <p className="font-sans font-normal text-[1.125rem] leading-[1.7] text-text-secondary max-w-2xl">
                 Customer Success Analyst com pegada analítica. Três anos transformando
                 operação de retail digital em conversa útil com cliente.
@@ -63,7 +63,7 @@ export default function Styleguide() {
             </div>
 
             <div>
-              <p className="font-mono text-text-muted text-sm mb-4">Body — 400, line-height 1.6</p>
+              <p className="font-mono text-text-muted text-sm mb-4">Body · 400, line-height 1.6</p>
               <p className="font-sans font-normal text-[1rem] leading-[1.6] max-w-2xl">
                 Combino fluência analítica com prática em treinamento de time, 
                 ciclos de renovação e apresentação de resultados.
@@ -71,7 +71,7 @@ export default function Styleguide() {
             </div>
 
             <div>
-              <p className="font-mono text-text-muted text-sm mb-4">Mono / Data — 500, tracking 0.02em, uppercase</p>
+              <p className="font-mono text-text-muted text-sm mb-4">Mono / Data · 500, tracking 0.02em, uppercase</p>
               <div className="space-y-4">
                 <p className="font-mono font-medium tracking-[0.02em] text-[0.875rem] uppercase text-text-muted">
                   Situation • Task • Action • Result

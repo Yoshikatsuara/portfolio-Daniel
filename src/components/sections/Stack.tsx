@@ -155,7 +155,7 @@ export default function Stack() {
         <div className="w-full text-center mb-12">
           <h2 className="font-mono text-text-muted uppercase tracking-[0.02em]">02. Stack</h2>
           <h3 className="font-sans font-bold tracking-[-0.03em] text-[clamp(2rem,5vw,3.5rem)] leading-tight text-text-primary">
-            Arsenal
+            Habilidades
           </h3>
         </div>
 
@@ -189,7 +189,7 @@ export default function Stack() {
         <div className="absolute top-24 lg:top-32 left-16 lg:left-24 z-20 pointer-events-none">
           <h2 className="font-mono text-text-muted uppercase tracking-[0.02em]">02. Stack</h2>
           <h3 className="font-sans font-bold tracking-[-0.03em] text-[clamp(2.5rem,5vw,4rem)] leading-tight text-text-primary">
-            Arsenal
+            Habilidades
           </h3>
         </div>
 
