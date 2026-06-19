@@ -50,29 +50,43 @@ export default function Philosophy() {
   };
 
   useEffect(() => {
-    if (prevIndex.current !== -1 && prevIndex.current !== activeIndex) {
-      const oldItem = document.getElementById(`phrase-${prevIndex.current}`);
-      const newItem = document.getElementById(`phrase-${activeIndex}`);
-      
-      // Animate out (Sai do quadro pra esquerda lentamente)
-      if (oldItem) {
-        gsap.to(oldItem, { x: "-50vw", opacity: 0, duration: 1.8, ease: "power2.inOut" });
+    const count = phrases.length;
+
+    // Entrada inicial: mostra a frase ativa, deixa as demais prontas fora do quadro (sem animar).
+    if (prevIndex.current === -1) {
+      for (let i = 0; i < count; i++) {
+        const el = document.getElementById(`phrase-${i}`);
+        if (el) gsap.set(el, { opacity: i === activeIndex ? 1 : 0, x: i === activeIndex ? 0 : "50vw" });
       }
-      
-      // Animate in (Entra pelo quadro da direita lentamente)
-      if (newItem) {
-        gsap.fromTo(newItem, 
-          { x: "50vw", opacity: 0 },
-          { x: 0, opacity: 1, duration: 2.0, ease: "power2.out", delay: 0.6 }
-        );
-      }
-    } else if (prevIndex.current === -1) {
-      // Entrada inicial
-      const newItem = document.getElementById(`phrase-${activeIndex}`);
-      if (newItem) {
-        gsap.set(newItem, { opacity: 1, x: 0 });
+      prevIndex.current = activeIndex;
+      return;
+    }
+
+    const prev = prevIndex.current;
+
+    // Limpa todas as frases não-ativas. A anterior sai animando pela esquerda;
+    // qualquer órfã de uma transição interrompida é escondida na hora (sem cruzar a tela).
+    for (let i = 0; i < count; i++) {
+      if (i === activeIndex) continue;
+      const el = document.getElementById(`phrase-${i}`);
+      if (!el) continue;
+      if (i === prev) {
+        gsap.to(el, { x: "-50vw", opacity: 0, duration: 1.1, ease: "power2.inOut", overwrite: "auto" });
+      } else {
+        gsap.killTweensOf(el);
+        gsap.set(el, { opacity: 0, x: "50vw" });
       }
     }
+
+    // Frase nova entra pela direita. overwrite evita conflito com tweens em andamento.
+    const newItem = document.getElementById(`phrase-${activeIndex}`);
+    if (newItem) {
+      gsap.fromTo(newItem,
+        { x: "50vw", opacity: 0 },
+        { x: 0, opacity: 1, duration: 1.2, ease: "power2.out", delay: 0.3, overwrite: "auto" }
+      );
+    }
+
     prevIndex.current = activeIndex;
   }, [activeIndex]);
 

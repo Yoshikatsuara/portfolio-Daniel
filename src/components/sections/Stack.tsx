@@ -73,25 +73,33 @@ export default function Stack() {
         // O efeito 'clean' vem do scroll ininterrupto e sólido, sem elementos piscando ou mudando de tamanho.
       });
 
-      // MOBILE (Vertical Linear Padrão)
+      // MOBILE (Vertical Linear Padrão) — cada card revela ao entrar na viewport
       mm.add("(max-width: 767px)", () => {
-        if (prefersReducedMotion) return;
-        gsap.fromTo(
-          ".stack-card-mobile",
-          { y: 30, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse"
+        const mobileCards = gsap.utils.toArray<HTMLElement>(".stack-card-mobile");
+
+        if (prefersReducedMotion) {
+          gsap.set(mobileCards, { opacity: 1 });
+          return;
+        }
+
+        mobileCards.forEach((card) => {
+          gsap.fromTo(
+            card,
+            { y: 40, opacity: 0, scale: 0.96 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.7,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 88%",
+                toggleActions: "play none none reverse"
+              }
             }
-          }
-        );
+          );
+        });
       });
 
     }, containerRef);
