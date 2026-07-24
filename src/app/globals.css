@@ -257,7 +257,7 @@ body {
   border-top: 1px solid var(--border);
   position: relative;
   z-index: 2;
-  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  background: color-mix(in srgb, var(--bg-primary) 66%, transparent);
 }
 .home-wrap {
   max-width: 1180px;
@@ -383,7 +383,7 @@ body {
   padding: 0 0 10px;
   position: relative;
   z-index: 2;
-  background: color-mix(in srgb, var(--bg-primary) 82%, transparent);
+  background: color-mix(in srgb, var(--bg-primary) 66%, transparent);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
