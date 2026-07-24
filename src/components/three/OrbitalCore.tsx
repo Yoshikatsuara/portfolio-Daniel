@@ -14,11 +14,13 @@ export default function OrbitalCore() {
     const canvas = canvasRef.current;
     if (!canvas || !window.WebGLRenderingContext) return;
 
+    const isMobile = window.innerWidth < 760;
+
     let renderer: THREE.WebGLRenderer;
     try {
       renderer = new THREE.WebGLRenderer({
         canvas,
-        antialias: true,
+        antialias: !isMobile, // MSAA custa caro em GPU de celular, é um canvas que nunca para de renderizar
         alpha: true,
         powerPreference: "high-performance",
       });
@@ -26,13 +28,15 @@ export default function OrbitalCore() {
       canvas.style.display = "none";
       return;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // No mobile, cap menor de resolução — a mesma cena em DPR 2 vs 1 é 4x
+    // menos pixel pra sombrear por frame, e é o canvas de fundo da página
+    // inteira, sempre ativo, então esse custo nunca some enquanto rola.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1 : 2));
     renderer.setClearColor(0x000000, 0);
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
 
-    const isMobile = window.innerWidth < 760;
     const NODE_COUNT = isMobile ? 60 : 120;
     const NODE_RADIUS = 3.1;
 
