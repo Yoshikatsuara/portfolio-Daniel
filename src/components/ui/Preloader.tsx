@@ -22,10 +22,10 @@ export default function Preloader() {
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    const start = performance.now();
+    let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    function tick(now: number) {
+    function tick(start: number, now: number) {
       const t = now - start;
       const lockedCount = Math.floor((t / LOCK_MS) * TARGET.length);
       setChars(
@@ -36,7 +36,7 @@ export default function Preloader() {
         )
       );
       if (lockedCount < TARGET.length) {
-        rafRef.current = requestAnimationFrame(tick);
+        rafRef.current = requestAnimationFrame((n) => tick(start, n));
       } else {
         setStatus("pronto");
         timers.push(
@@ -50,9 +50,23 @@ export default function Preloader() {
         );
       }
     }
-    rafRef.current = requestAnimationFrame(tick);
+
+    // Espera a fonte mono carregar antes de animar: sem isso, o texto troca
+    // de fonte de fallback pra JetBrains Mono no meio da animação e "pula"
+    // de largura (o salto pra esquerda que aparecia perto da linha laranja).
+    const fontsReady =
+      typeof document !== "undefined" && "fonts" in document
+        ? document.fonts.ready
+        : Promise.resolve();
+    const safety = new Promise<void>((resolve) => setTimeout(resolve, 300));
+
+    Promise.race([fontsReady, safety]).then(() => {
+      if (cancelled) return;
+      rafRef.current = requestAnimationFrame((n) => tick(n, n));
+    });
 
     return () => {
+      cancelled = true;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       timers.forEach(clearTimeout);
       document.body.style.overflow = "";
