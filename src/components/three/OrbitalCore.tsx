@@ -384,9 +384,9 @@ export default function OrbitalCore() {
     // Em telas estreitas (retrato) o frustum horizontal é bem menor — um
     // offset pensado pra desktop jogaria o C pra fora da tela.
     const DOCK_OFFSET = isMobile
-      ? new THREE.Vector3(0.85, 1.35, -5.4)
-      : new THREE.Vector3(2.7, 1.7, -6.2);
-    const dockScalePeak = isMobile ? 2.0 : 2.6;
+      ? new THREE.Vector3(0.7, 1.1, -4.4)
+      : new THREE.Vector3(2.0, 1.25, -4.6);
+    const dockScalePeak = isMobile ? 1.1 : 1.3;
     const dockWorldPos = new THREE.Vector3();
     function computeAboutRaw(): number {
       if (!aboutEl) return 0;
@@ -480,7 +480,7 @@ export default function OrbitalCore() {
           if (s === cSat) {
             s.mesh.position.lerp(dockWorldPos, smoothAboutT);
             scale = scale + (dockScalePeak - scale) * smoothAboutT;
-            glowSizeAttr.array[0] = smoothAboutT * 130;
+            glowSizeAttr.array[0] = smoothAboutT * 300;
             glowSizeAttr.needsUpdate = true;
           }
 
@@ -502,7 +502,9 @@ export default function OrbitalCore() {
 
         renderer.render(scene, camera);
 
-        const nextOpacity = 1 - scrollProgress * 0.35;
+        // No dock do Sobre, segura o canvas em opacidade cheia — senão o C
+        // herda o esmaecimento por scroll e parece "atrás"/opaco.
+        const nextOpacity = Math.max(1 - scrollProgress * 0.35, smoothAboutT);
         if (Math.abs(nextOpacity - lastOpacity) > 0.004 && canvas) {
           canvas.style.opacity = String(nextOpacity);
           lastOpacity = nextOpacity;
