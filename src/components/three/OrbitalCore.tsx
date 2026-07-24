@@ -436,11 +436,17 @@ export default function OrbitalCore() {
           s.angle += s.speed;
           placeSatellite(s);
 
+          // Enquanto o C está sendo puxado pro dock (smoothAboutT > 0), ele
+          // fica IMUNE ao giro de abertura e ao zoom pulsado — antes os três
+          // efeitos competiam e somavam escala/rotação por cima do dock,
+          // criando aquela mancha grande. Isolado, só o dock controla o C.
+          const isDocking = s === cSat && smoothAboutT > 0.02;
+
           // Giro de abertura só do C: nos primeiros ~2.6s, gira bem mais
           // rápido (efeito de "chegando perto") e desacelera até o ritmo
           // normal — puramente de rotação, não mexe na órbita nem na câmera.
           let rotYThisFrame = s.rotY;
-          if (s === cSat) {
+          if (s === cSat && !isDocking) {
             const introDuration = 2.6;
             if (nowSec < introDuration) {
               const introT = 1 - nowSec / introDuration;
@@ -453,37 +459,39 @@ export default function OrbitalCore() {
           // Zoom pulsado: a maior parte do ciclo fica em escala 1, com um
           // pulso raro e escalonado por satélite — sobe rápido, mas a volta
           // (descida) é mais lenta e suave, não simétrica.
-          const windowFrac = 0.1;
-          const riseFrac = 0.35;
-          const cyclePos = ((nowSec + s.pulsePhase) % s.pulsePeriod) / s.pulsePeriod;
           let scale = 1;
-          if (cyclePos < windowFrac) {
-            const localT = cyclePos / windowFrac;
-            const bump =
-              localT < riseFrac
-                ? Math.sin((localT / riseFrac) * Math.PI * 0.5)
-                : Math.cos(((localT - riseFrac) / (1 - riseFrac)) * Math.PI * 0.5);
-            scale = 1 + bump * (s.peakScale - 1);
-          }
-          // O C também "chega de perto" nos primeiros ~2.6s: começa grande
-          // e desacelera até o tamanho normal, por cima do zoom periódico.
-          if (s === cSat && nowSec < 2.6) {
-            const introT = 1 - nowSec / 2.6;
-            const introEase = introT * introT * introT;
-            const introScale = 1 + introEase * 2.4;
-            scale = Math.max(scale, introScale);
+          if (!isDocking) {
+            const windowFrac = 0.1;
+            const riseFrac = 0.35;
+            const cyclePos = ((nowSec + s.pulsePhase) % s.pulsePeriod) / s.pulsePeriod;
+            if (cyclePos < windowFrac) {
+              const localT = cyclePos / windowFrac;
+              const bump =
+                localT < riseFrac
+                  ? Math.sin((localT / riseFrac) * Math.PI * 0.5)
+                  : Math.cos(((localT - riseFrac) / (1 - riseFrac)) * Math.PI * 0.5);
+              scale = 1 + bump * (s.peakScale - 1);
+            }
+            // O C também "chega de perto" nos primeiros ~2.6s: começa grande
+            // e desacelera até o tamanho normal, por cima do zoom periódico.
+            if (s === cSat && nowSec < 2.6) {
+              const introT = 1 - nowSec / 2.6;
+              const introEase = introT * introT * introT;
+              const introScale = 1 + introEase * 2.4;
+              scale = Math.max(scale, introScale);
+            }
           }
 
           // Dock na seção Sobre: puxa o C da órbita pro canto da câmera,
-          // maior, e acende o halo — as outras formas nem sabem que isso
-          // existe, continuam orbitando normal.
+          // maior, com halo respirando (brilho + pulso, sem depender do
+          // zoom genérico) — as outras formas nem sabem que isso existe,
+          // continuam orbitando normal.
           if (s === cSat) {
             s.mesh.position.lerp(dockWorldPos, smoothAboutT);
             scale = scale + (dockScalePeak - scale) * smoothAboutT;
-            // aSize é multiplicado por (42/distância) no shader — dockado,
-            // a distância até a câmera é pequena (~4.2-5), então precisa de
-            // um aSize bem menor que em órbita normal pra não virar um blob.
-            glowSizeAttr.array[0] = smoothAboutT * 13;
+            const breathe = 1 + 0.28 * Math.sin(nowSec * 2.2);
+            const glowBase = isMobile ? 8 : 13;
+            glowSizeAttr.array[0] = smoothAboutT * glowBase * breathe;
             glowSizeAttr.needsUpdate = true;
           }
 
