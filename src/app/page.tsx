@@ -1,12 +1,14 @@
 import { Metadata } from "next";
 import { profile } from "@/content/profile";
-import Preloader from "@/components/ui/Preloader";
+import MotionBanner from "@/components/ui/MotionBanner";
+import RevealInit from "@/components/ui/RevealInit";
+import OrbitalCore from "@/components/three/OrbitalCore";
 import Navbar from "@/components/ui/Navbar";
 import Hero from "@/components/sections/Hero";
+import Ticker from "@/components/sections/Ticker";
+import About from "@/components/sections/About";
 import Cases from "@/components/sections/Cases";
 import Stack from "@/components/sections/Stack";
-import Philosophy from "@/components/sections/Philosophy";
-import About from "@/components/sections/About";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 
@@ -17,16 +19,21 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
-      <Preloader />
+    <>
+      <MotionBanner />
+      <OrbitalCore />
+      <div className="home-scan-fixed" aria-hidden="true" />
+      <RevealInit />
       <Navbar />
-      <Hero />
-      <Philosophy />
-      <About />
-      <Cases />
-      <Stack />
-      <Contact />
+      <main className="min-h-screen">
+        <Hero />
+        <Ticker />
+        <About />
+        <Cases />
+        <Stack />
+        <Contact />
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

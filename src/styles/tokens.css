@@ -1,11 +1,12 @@
 :root {
-  --bg-primary:    #0D0D12;  /* Obsidiana — background base */
-  --bg-surface:    #14141B;  /* Cards e elevações */
-  --bg-elevated:   #1C1C26;  /* Modais, dropdowns */
-  --border:        #2A2A35;  /* Bordas sutis */
-  --text-primary:  #FAF8F5;  /* Marfim — texto principal */
-  --text-secondary:#A8A8B3;  /* Texto secundário */
-  --text-muted:    #6B6B78;  /* Captions, metadata */
-  --accent:        #3B5BFF;  /* Royal Electric — CTA, destaques */
-  --accent-glow:   #3B5BFF40;/* Glow do accent (40 = 25% opacidade) */
+  --bg-primary:    #050A08;  /* Verde-preto CRT — background base */
+  --bg-surface:    #0C1611;  /* Cards e elevações */
+  --bg-elevated:   #08120D;  /* Gradientes, camadas intermediárias */
+  --border:        #1B2A22;  /* Bordas sutis */
+  --text-primary:  #E8F5EE;  /* Texto principal */
+  --text-secondary:#9DB8AA;  /* Texto secundário */
+  --text-muted:    #587265;  /* Captions, metadata */
+  --accent:        #3DDC97;  /* Verde-menta CRT — CTA, destaques */
+  --accent-soft:   #9BFFD0;  /* Variante clara do accent */
+  --accent-glow:   #3DDC9740;/* Glow do accent (40 = 25% opacidade) */
 }
