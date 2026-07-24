@@ -386,7 +386,11 @@ export default function OrbitalCore() {
     const DOCK_OFFSET = isMobile
       ? new THREE.Vector3(0.5, -1.1, -4.2)
       : new THREE.Vector3(1.0, -1.3, -5.0);
-    const dockScalePeak = isMobile ? 1.1 : 1.3;
+    // Conta real de perspectiva (antes eu só chutava): diâmetro do C em
+    // escala 1 é ~1.62 (2*(cRingRadius+cTubeRadius)). Altura visível do
+    // mundo à distância D do DOCK_OFFSET.z é 2*D*tan(22.5°). Pra ocupar só
+    // ~10% da altura da tela: scale = 0.10 * (2*D*tan(22.5°)) / 1.62.
+    const dockScalePeak = isMobile ? 0.22 : 0.28;
     const dockWorldPos = new THREE.Vector3();
     function computeAboutRaw(): number {
       if (!aboutEl) return 0;
