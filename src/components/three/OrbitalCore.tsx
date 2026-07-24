@@ -384,8 +384,8 @@ export default function OrbitalCore() {
     // Em telas estreitas (retrato) o frustum horizontal é bem menor — um
     // offset pensado pra desktop jogaria o C pra fora da tela.
     const DOCK_OFFSET = isMobile
-      ? new THREE.Vector3(0.7, 1.1, -4.4)
-      : new THREE.Vector3(2.0, 1.25, -4.6);
+      ? new THREE.Vector3(0.5, -1.1, -4.2)
+      : new THREE.Vector3(1.0, -1.3, -5.0);
     const dockScalePeak = isMobile ? 1.1 : 1.3;
     const dockWorldPos = new THREE.Vector3();
     function computeAboutRaw(): number {
@@ -480,7 +480,10 @@ export default function OrbitalCore() {
           if (s === cSat) {
             s.mesh.position.lerp(dockWorldPos, smoothAboutT);
             scale = scale + (dockScalePeak - scale) * smoothAboutT;
-            glowSizeAttr.array[0] = smoothAboutT * 300;
+            // aSize é multiplicado por (42/distância) no shader — dockado,
+            // a distância até a câmera é pequena (~4.2-5), então precisa de
+            // um aSize bem menor que em órbita normal pra não virar um blob.
+            glowSizeAttr.array[0] = smoothAboutT * 13;
             glowSizeAttr.needsUpdate = true;
           }
 
