@@ -577,6 +577,172 @@ body {
   color: var(--accent-soft);
 }
 
+/* ============ preloader ============ */
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.preloader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.22) 2px 4px);
+}
+.preloader-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.preloader-word {
+  font-family: var(--mono-stack);
+  font-size: clamp(20px, 5vw, 30px);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.preloader-word .is-locked {
+  color: var(--accent);
+  text-shadow: 0 0 18px var(--accent-glow);
+}
+.preloader-word .is-scrambling {
+  color: var(--text-muted);
+}
+.preloader-status {
+  font-family: var(--mono-stack);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.preloader-wipe {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow);
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  z-index: 2;
+}
+.preloader-cut {
+  position: absolute;
+  inset: 0;
+  background: var(--bg-primary);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.preloader-exit .preloader-wipe {
+  animation: preloaderWipe 0.32s ease forwards;
+}
+.preloader-exit .preloader-cut {
+  animation: preloaderCut 0.5s ease forwards;
+}
+@keyframes preloaderWipe {
+  0% { transform: scaleX(0); opacity: 1; }
+  65% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes preloaderCut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ============ popup mobile ============ */
+.mobile-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: color-mix(in srgb, #000 55%, transparent);
+  padding: 16px;
+  opacity: 0;
+  animation: popupIn 0.4s ease forwards;
+}
+.mobile-popup-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: 14px;
+  padding: 20px;
+  transform: translateY(14px);
+  animation: popupCardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.mobile-popup-tag {
+  display: block;
+  font-family: var(--mono-stack);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  margin-bottom: 10px;
+}
+.mobile-popup-card h4 {
+  font-size: 16px;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+.mobile-popup-card p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: 0 0 16px;
+}
+.mobile-popup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mobile-popup-primary {
+  background: var(--accent);
+  color: #1a0d04;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 11px 0;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-inter), sans-serif;
+}
+.mobile-popup-secondary {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  text-decoration: underline;
+  padding: 4px 0;
+  cursor: pointer;
+  font-family: var(--font-inter), sans-serif;
+}
+.mobile-popup-secondary:hover {
+  color: var(--accent-soft);
+}
+@keyframes popupIn {
+  to { opacity: 1; }
+}
+@keyframes popupCardIn {
+  to { transform: translateY(0); }
+}
+
 /* ============ responsivo ============ */
 @media (max-width: 820px) {
   /* backdrop-filter (blur) por cima de um canvas WebGL que nunca para de
