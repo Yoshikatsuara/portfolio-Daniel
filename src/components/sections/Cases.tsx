@@ -4,7 +4,8 @@ import { cases } from "@/content/cases";
 
 // Carrossel com rotação automática E scroll manual: a lista é duplicada e o
 // container rola sozinho via scrollLeft (loop infinito voltando meia largura).
-// Qualquer interação (hover, toque, scroll manual) pausa; solta, ele retoma.
+// Só pausa com interação de scroll de verdade (clique/arrasto, toque, roda
+// do mouse) — passar o mouse por cima (hover) não pausa mais.
 export default function Cases() {
   const outerRef = useRef<HTMLDivElement | null>(null);
   const loop = [...cases, ...cases];
@@ -28,8 +29,8 @@ export default function Cases() {
       }, 2200);
     };
 
-    const onEnter = () => pause();
-    const onLeave = () => scheduleResume();
+    const onPointerDown = () => pause();
+    const onPointerUp = () => scheduleResume();
     const onTouchStart = () => pause();
     const onTouchEnd = () => scheduleResume();
     const onWheel = () => {
@@ -37,8 +38,8 @@ export default function Cases() {
       scheduleResume();
     };
 
-    el.addEventListener("pointerenter", onEnter);
-    el.addEventListener("pointerleave", onLeave);
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointerup", onPointerUp);
     el.addEventListener("touchstart", onTouchStart, { passive: true });
     el.addEventListener("touchend", onTouchEnd);
     el.addEventListener("wheel", onWheel, { passive: true });
@@ -56,8 +57,8 @@ export default function Cases() {
     return () => {
       cancelAnimationFrame(rafId);
       if (resumeTimer) clearTimeout(resumeTimer);
-      el.removeEventListener("pointerenter", onEnter);
-      el.removeEventListener("pointerleave", onLeave);
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointerup", onPointerUp);
       el.removeEventListener("touchstart", onTouchStart);
       el.removeEventListener("touchend", onTouchEnd);
       el.removeEventListener("wheel", onWheel);
