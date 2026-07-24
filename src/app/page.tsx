@@ -26,9 +26,9 @@ export default function Home() {
       <main className="min-h-screen">
         <Hero />
         <Ticker />
-        <About />
         <Cases />
         <Stack />
+        <About />
         <Contact />
       </main>
       <Footer />

@@ -291,6 +291,13 @@ body {
   flex: 1;
   align-self: center;
 }
+.home-section-lead {
+  color: var(--text-secondary);
+  font-size: 13.5px;
+  line-height: 1.7;
+  max-width: 60ch;
+  margin: -20px 0 32px;
+}
 .home-lang-btn {
   font-family: var(--mono-stack);
   font-size: 11px;

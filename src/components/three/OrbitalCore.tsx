@@ -209,45 +209,105 @@ export default function OrbitalCore() {
       tilt: number;
       rotX: number;
       rotY: number;
+      pulsePhase: number;
+      pulsePeriod: number;
+      peakScale: number;
     };
-    const satellites: Sat[] = SHAPE_DEFS.map((def) => {
-      const mesh = new THREE.LineSegments(
-        new THREE.EdgesGeometry(makeShapeGeometry(def.geo, def.r)),
-        new THREE.LineBasicMaterial({ color: def.color, transparent: true, opacity: 0.65 })
-      );
+    function makeSat(
+      mesh: THREE.Object3D,
+      opts: { radius: number; incline: number; speed: number; tilt: number; rotX?: number; rotY?: number }
+    ): Sat {
       scene.add(mesh);
       return {
         mesh,
         angle: Math.random() * Math.PI * 2,
-        speed: def.speed * 0.011,
+        speed: opts.speed * 0.011,
+        radius: opts.radius,
+        incline: opts.incline,
+        tilt: opts.tilt,
+        rotX: opts.rotX ?? (Math.random() - 0.5) * 0.014,
+        rotY: opts.rotY ?? (Math.random() - 0.5) * 0.018,
+        // "zoom bem grande e volta" — mas só de vez em quando, não toda hora:
+        // ciclo longo (30-60s) por satélite, cada um com sua fase, então o
+        // pulso vira um evento raro e escalonado, não um looping constante.
+        pulsePhase: Math.random() * 60,
+        pulsePeriod: 32 + Math.random() * 30,
+        peakScale: 3.0 + Math.random() * 1.2,
+      };
+    }
+
+    const wireMat = (color: number) => new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.65 });
+    const edgesOf = (geo: THREE.BufferGeometry, color: number) => new THREE.LineSegments(new THREE.EdgesGeometry(geo), wireMat(color));
+
+    const satellites: Sat[] = SHAPE_DEFS.map((def) =>
+      makeSat(edgesOf(makeShapeGeometry(def.geo, def.r), def.color), {
         radius: def.radius,
         incline: def.incline,
+        speed: def.speed,
         tilt: def.tilt,
-        rotX: (Math.random() - 0.5) * 0.014,
-        rotY: (Math.random() - 0.5) * 0.018,
-      };
-    });
-
-    // "C" da Cadastra em 3D: torus com abertura de 90 graus (gap virado pra
-    // direita), laranja solido, girando no proprio eixo enquanto orbita.
-    const cLogoGroup = new THREE.Group();
-    const cLogoMesh = new THREE.Mesh(
-      new THREE.TorusGeometry(0.62, 0.19, 16, 56, Math.PI * 1.5),
-      new THREE.MeshBasicMaterial({ color: 0xff5a00, transparent: true, opacity: 0.95 })
+      })
     );
-    cLogoMesh.rotation.z = Math.PI * 0.25;
-    cLogoGroup.add(cLogoMesh);
-    scene.add(cLogoGroup);
-    satellites.push({
-      mesh: cLogoGroup,
-      angle: Math.random() * Math.PI * 2,
-      speed: 0.09 * 0.011,
-      radius: 4.0,
-      incline: 0.45,
-      tilt: 2.0,
-      rotX: 0,
-      rotY: 0.014,
+
+    // "C" da Cadastra em 3D: torus com abertura de 90 graus, preenchimento
+    // laranja sólido + filete prateado (silhueta, sem linhas cruzando a
+    // superfície) + tampas nas duas pontas abertas do arco (TorusGeometry
+    // parcial não fecha as pontas sozinho — sem a tampa dava pra ver o fundo
+    // através do buraco).
+    const CBORDER = 0xd8dde6;
+    const cShape = new THREE.Group();
+    const cRingRadius = 0.62;
+    const cTubeRadius = 0.19;
+    const cArc = Math.PI * 1.5;
+    const cTorusGeo = new THREE.TorusGeometry(cRingRadius, cTubeRadius, 14, 56, cArc);
+    cShape.add(new THREE.Mesh(cTorusGeo, new THREE.MeshBasicMaterial({ color: 0xff5a00 })));
+    // Filete prateado: cópia levemente maior renderizada só por dentro
+    // (BackSide) — dá um contorno fino ao redor de toda a silhueta, sem
+    // desenhar nenhuma linha sobre a superfície laranja.
+    const cOutline = new THREE.Mesh(cTorusGeo, new THREE.MeshBasicMaterial({ color: CBORDER, side: THREE.BackSide }));
+    cOutline.scale.setScalar(1.1);
+    cShape.add(cOutline);
+    const capGeo = new THREE.SphereGeometry(cTubeRadius, 16, 16);
+    const capMat = new THREE.MeshBasicMaterial({ color: 0xff5a00 });
+    const capStart = new THREE.Mesh(capGeo, capMat);
+    capStart.position.set(cRingRadius, 0, 0);
+    cShape.add(capStart);
+    const capEnd = new THREE.Mesh(capGeo, capMat);
+    capEnd.position.set(cRingRadius * Math.cos(cArc), cRingRadius * Math.sin(cArc), 0);
+    cShape.add(capEnd);
+    cShape.rotation.z = Math.PI * 0.25;
+    const cLogoGroup = new THREE.Group();
+    cLogoGroup.add(cShape);
+    const cSat = makeSat(cLogoGroup, { radius: 4.0, incline: 0.45, speed: 0.09, tilt: 2.0, rotX: 0, rotY: 0.014 });
+    satellites.push(cSat);
+
+    // 4 elementos temáticos de Retail Media: seta de crescimento, moeda
+    // (investimento em mídia), alvo (targeting) e gráfico de barras (dados).
+    const growthGeo = new THREE.ConeGeometry(0.28, 0.75, 6);
+    satellites.push(
+      makeSat(edgesOf(growthGeo, 0xff5a00), { radius: 5.9, incline: 0.35, speed: -0.14, tilt: 0.9 })
+    );
+
+    const coinGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.12, 20);
+    satellites.push(
+      makeSat(edgesOf(coinGeo, 0xffb380), { radius: 4.4, incline: 0.6, speed: 0.2, tilt: 5.2 })
+    );
+
+    const targetGroup = new THREE.Group();
+    targetGroup.add(edgesOf(new THREE.TorusGeometry(0.46, 0.045, 8, 32), 0xff5a00));
+    targetGroup.add(edgesOf(new THREE.TorusGeometry(0.25, 0.045, 8, 24), 0xffb380));
+    satellites.push(
+      makeSat(targetGroup, { radius: 6.4, incline: 0.3, speed: 0.12, tilt: 3.1 })
+    );
+
+    const barsGroup = new THREE.Group();
+    [0.35, 0.55, 0.8].forEach((h, i) => {
+      const bar = edgesOf(new THREE.BoxGeometry(0.2, h, 0.2), i === 1 ? 0xffb380 : 0xff5a00);
+      bar.position.set((i - 1) * 0.32, h / 2 - 0.4, 0);
+      barsGroup.add(bar);
     });
+    satellites.push(
+      makeSat(barsGroup, { radius: 5.1, incline: 0.5, speed: -0.17, tilt: 4.6 })
+    );
 
     function resize() {
       const w = window.innerWidth;
@@ -327,8 +387,45 @@ export default function OrbitalCore() {
         for (const s of satellites) {
           s.angle += s.speed;
           placeSatellite(s);
+
+          // Giro de abertura só do C: nos primeiros ~2.6s, gira bem mais
+          // rápido (efeito de "chegando perto") e desacelera até o ritmo
+          // normal — puramente de rotação, não mexe na órbita nem na câmera.
+          let rotYThisFrame = s.rotY;
+          if (s === cSat) {
+            const introDuration = 2.6;
+            if (nowSec < introDuration) {
+              const introT = 1 - nowSec / introDuration;
+              rotYThisFrame += introT * introT * 0.16;
+            }
+          }
           s.mesh.rotation.x += s.rotX;
-          s.mesh.rotation.y += s.rotY;
+          s.mesh.rotation.y += rotYThisFrame;
+
+          // Zoom pulsado: a maior parte do ciclo fica em escala 1, com um
+          // pulso raro e escalonado por satélite — sobe rápido, mas a volta
+          // (descida) é mais lenta e suave, não simétrica.
+          const windowFrac = 0.1;
+          const riseFrac = 0.35;
+          const cyclePos = ((nowSec + s.pulsePhase) % s.pulsePeriod) / s.pulsePeriod;
+          let scale = 1;
+          if (cyclePos < windowFrac) {
+            const localT = cyclePos / windowFrac;
+            const bump =
+              localT < riseFrac
+                ? Math.sin((localT / riseFrac) * Math.PI * 0.5)
+                : Math.cos(((localT - riseFrac) / (1 - riseFrac)) * Math.PI * 0.5);
+            scale = 1 + bump * (s.peakScale - 1);
+          }
+          // O C também "chega de perto" nos primeiros ~2.6s: começa grande
+          // e desacelera até o tamanho normal, por cima do zoom periódico.
+          if (s === cSat && nowSec < 2.6) {
+            const introT = 1 - nowSec / 2.6;
+            const introEase = introT * introT * introT;
+            const introScale = 1 + introEase * 2.4;
+            scale = Math.max(scale, introScale);
+          }
+          s.mesh.scale.setScalar(scale);
         }
         for (let ni = 0; ni < NODE_COUNT; ni++) {
           const twinkle = 0.75 + Math.sin(nowSec * 1.4 + nodePhase[ni]) * 0.25;

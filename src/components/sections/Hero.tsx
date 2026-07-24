@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 const LINES = [
   "daniel@ara:~$ ./customer_success --data-driven",
-  "daniel@ara:~$ atualmente: retail media analyst @ cadastra",
+  "daniel@ara:~$ retail media analyst @ cadastra · bens de consumo",
   "daniel@ara:~$ amazon · mercado livre · sell-out em escala",
   "daniel@ara:~$ python + looker + ia aplicada",
 ];

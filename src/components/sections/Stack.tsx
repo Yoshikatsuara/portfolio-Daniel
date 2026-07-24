@@ -9,6 +9,10 @@ export default function Stack() {
           <span className="num">02.</span>
           <h2>Habilidades</h2>
         </div>
+        <p className="home-section-lead reveal">
+          Retail Media Analyst para indústria de bens de consumo — as habilidades
+          por trás disso, por categoria.
+        </p>
         <div className="home-bands">
           {stack.map((group, i) => (
             <div

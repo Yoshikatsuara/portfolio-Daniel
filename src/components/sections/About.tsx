@@ -46,7 +46,7 @@ export default function About() {
             </div>
             <div className="row">
               <span className="k">ATUALMENTE</span>
-              <span className="v hl">Retail Media Analyst @ Cadastra</span>
+              <span className="v hl">Retail Media Analyst @ Cadastra · Bens de Consumo</span>
             </div>
           </div>
         </div>

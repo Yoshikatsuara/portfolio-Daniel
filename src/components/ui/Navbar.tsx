@@ -11,7 +11,7 @@ export default function Navbar() {
         </div>
         <span className="home-badge">
           <span className="dot" />
-          Atualmente: Retail Media Analyst @ Cadastra
+          Atualmente: Retail Media Analyst @ Cadastra · Bens de Consumo
         </span>
       </div>
     </nav>
