@@ -582,13 +582,17 @@ body {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: var(--bg-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
-.preloader::after {
+.preloader-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: var(--bg-primary);
+  z-index: 2;
+}
+.preloader-panel::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -596,13 +600,37 @@ body {
   opacity: 0.5;
   background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0, 0, 0, 0.22) 2px 4px);
 }
+.preloader-panel.top {
+  top: 0;
+}
+.preloader-panel.bottom {
+  bottom: 0;
+}
+.preloader-panel.top.is-splitting {
+  animation: preloaderPanelUp 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+.preloader-panel.bottom.is-splitting {
+  animation: preloaderPanelDown 0.7s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+@keyframes preloaderPanelUp {
+  to { transform: translateY(-100%); }
+}
+@keyframes preloaderPanelDown {
+  to { transform: translateY(100%); }
+}
 .preloader-stage {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  inset: 0;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  transition: opacity 0.3s ease;
+}
+.preloader-stage.is-fading {
+  opacity: 0;
 }
 .preloader-word {
   font-family: var(--mono-stack);
@@ -624,7 +652,7 @@ body {
   text-transform: uppercase;
   color: var(--text-muted);
 }
-.preloader-wipe {
+.preloader-line {
   position: absolute;
   left: 0;
   right: 0;
@@ -634,33 +662,18 @@ body {
   background: var(--accent);
   box-shadow: 0 0 16px var(--accent-glow);
   transform: scaleX(0);
-  transform-origin: left;
+  opacity: 1;
+  z-index: 4;
+  transition: opacity 0.3s ease;
+}
+.preloader-line.is-growing {
+  animation: preloaderLineGrow 0.55s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+}
+.preloader-line.is-fading {
   opacity: 0;
-  z-index: 2;
 }
-.preloader-cut {
-  position: absolute;
-  inset: 0;
-  background: var(--bg-primary);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 3;
-}
-.preloader-exit .preloader-wipe {
-  animation: preloaderWipe 0.32s ease forwards;
-}
-.preloader-exit .preloader-cut {
-  animation: preloaderCut 0.5s ease forwards;
-}
-@keyframes preloaderWipe {
-  0% { transform: scaleX(0); opacity: 1; }
-  65% { transform: scaleX(1); opacity: 1; }
-  100% { transform: scaleX(1); opacity: 0; }
-}
-@keyframes preloaderCut {
-  0% { opacity: 0; }
-  10% { opacity: 1; }
-  100% { opacity: 0; }
+@keyframes preloaderLineGrow {
+  to { transform: scaleX(1); }
 }
 
 /* ============ popup mobile ============ */
