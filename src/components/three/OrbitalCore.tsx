@@ -3,8 +3,10 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 // Fundo 3D fixo da página inteira: icosaedro central + rede de nós em esfera
-// de Fibonacci + pulsos de sinal + sólidos wireframe orbitando. Desce e gira
-// junto com o scroll (com amortecimento pra ficar liso).
+// de Fibonacci + pulsos de sinal + sólidos wireframe orbitando (incluindo o
+// "C" da Cadastra). Desce e gira junto com o scroll (com amortecimento pra
+// ficar liso). Na seção "Sobre", o C sai da órbita e dockeia no canto da
+// câmera, maior e com halo aceso; as outras formas continuam no fundo.
 export default function OrbitalCore() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -248,24 +250,15 @@ export default function OrbitalCore() {
       })
     );
 
-    // "C" da Cadastra em 3D: torus com abertura de 90 graus, preenchimento
-    // laranja sólido + filete prateado (silhueta, sem linhas cruzando a
-    // superfície) + tampas nas duas pontas abertas do arco (TorusGeometry
-    // parcial não fecha as pontas sozinho — sem a tampa dava pra ver o fundo
-    // através do buraco).
-    const CBORDER = 0xd8dde6;
+    // "C" da Cadastra em 3D, fiel à marca real: anel laranja com vão largo
+    // e um ponto separado assentado NO vão, sem encostar nas pontas do anel
+    // (na referência da marca o ponto é um círculo solto entre as pontas).
     const cShape = new THREE.Group();
     const cRingRadius = 0.62;
-    const cTubeRadius = 0.19;
-    const cArc = Math.PI * 1.5;
+    const cTubeRadius = 0.17;
+    const cArc = Math.PI * 1.62; // ~292°, vão de ~68°
     const cTorusGeo = new THREE.TorusGeometry(cRingRadius, cTubeRadius, 14, 56, cArc);
     cShape.add(new THREE.Mesh(cTorusGeo, new THREE.MeshBasicMaterial({ color: 0xff5a00 })));
-    // Filete prateado: cópia levemente maior renderizada só por dentro
-    // (BackSide) — dá um contorno fino ao redor de toda a silhueta, sem
-    // desenhar nenhuma linha sobre a superfície laranja.
-    const cOutline = new THREE.Mesh(cTorusGeo, new THREE.MeshBasicMaterial({ color: CBORDER, side: THREE.BackSide }));
-    cOutline.scale.setScalar(1.1);
-    cShape.add(cOutline);
     const capGeo = new THREE.SphereGeometry(cTubeRadius, 16, 16);
     const capMat = new THREE.MeshBasicMaterial({ color: 0xff5a00 });
     const capStart = new THREE.Mesh(capGeo, capMat);
@@ -274,7 +267,27 @@ export default function OrbitalCore() {
     const capEnd = new THREE.Mesh(capGeo, capMat);
     capEnd.position.set(cRingRadius * Math.cos(cArc), cRingRadius * Math.sin(cArc), 0);
     cShape.add(capEnd);
+    // Ponto no centro do vão: menor que o tubo e no MESMO plano do anel,
+    // com folga real pros dois lados — não sobrepõe as tampas.
+    const gapCenterAngle = cArc + (Math.PI * 2 - cArc) / 2;
+    const dotMat = new THREE.MeshBasicMaterial({ color: 0xffd9b8 });
+    const cDot = new THREE.Mesh(new THREE.SphereGeometry(cTubeRadius * 0.8, 20, 20), dotMat);
+    cDot.position.set(cRingRadius * Math.cos(gapCenterAngle), cRingRadius * Math.sin(gapCenterAngle), 0);
+    cShape.add(cDot);
     cShape.rotation.z = Math.PI * 0.25;
+
+    // Halo aditivo (reaproveita o shader de glow dos nós/pulsos): invisível
+    // em órbita normal, acende quando o C fica "dockado" no canto na seção
+    // Sobre — ver useAboutDock no loop principal.
+    const glowGeo = new THREE.BufferGeometry();
+    const glowPosAttr = new THREE.BufferAttribute(new Float32Array([0, 0, 0]), 3);
+    const glowSizeAttr = new THREE.BufferAttribute(new Float32Array([0]), 1);
+    glowGeo.setAttribute("position", glowPosAttr);
+    glowGeo.setAttribute("aColor", new THREE.BufferAttribute(new Float32Array([1, 0.86, 0.7]), 3));
+    glowGeo.setAttribute("aSize", glowSizeAttr);
+    const cGlow = new THREE.Points(glowGeo, makeGlowMaterial());
+    cShape.add(cGlow);
+
     const cLogoGroup = new THREE.Group();
     cLogoGroup.add(cShape);
     const cSat = makeSat(cLogoGroup, { radius: 4.0, incline: 0.45, speed: 0.09, tilt: 2.0, rotX: 0, rotY: 0.014 });
@@ -334,7 +347,7 @@ export default function OrbitalCore() {
       return Math.max(0, Math.min(1, window.scrollY / max));
     }
 
-    function renderFrame(orbitAngle: number, scrollProgress: number) {
+    function updateCamera(orbitAngle: number, scrollProgress: number) {
       const camRadius = 10.5;
       const camY = 2.2 - scrollProgress * 4.6 + mouse.y * -0.8;
       camera.position.set(
@@ -343,7 +356,7 @@ export default function OrbitalCore() {
         Math.cos(orbitAngle) * camRadius
       );
       camera.lookAt(0, -scrollProgress * 1.4, 0);
-      renderer.render(scene, camera);
+      camera.updateMatrixWorld(true);
     }
     function placeSatellite(s: Sat) {
       s.mesh.position.set(
@@ -356,14 +369,40 @@ export default function OrbitalCore() {
     function renderStatic() {
       core.rotation.set(0.4, 0.6, 0);
       coreFill.rotation.copy(core.rotation);
+      updateCamera(0.6, 0);
       satellites.forEach(placeSatellite);
-      renderFrame(0.6, 0);
+      renderer.render(scene, camera);
+    }
+
+    // Seção "Sobre": quando ela fica centralizada na tela, o C sai da órbita
+    // e "dockeia" num canto fixo em relação à câmera, maior e brilhando —
+    // as outras formas continuam orbitando normal, lá atrás. Volta pro fundo
+    // conforme rola pra Cases/Stack ou desce mais pra Contato.
+    const aboutEl = document.getElementById("sobre");
+    // Deslocamento no espaço local da câmera (canto superior direito, um
+    // pouco à frente); convertido pra mundo a cada frame via localToWorld.
+    // Em telas estreitas (retrato) o frustum horizontal é bem menor — um
+    // offset pensado pra desktop jogaria o C pra fora da tela.
+    const DOCK_OFFSET = isMobile
+      ? new THREE.Vector3(0.85, 1.35, -5.4)
+      : new THREE.Vector3(2.7, 1.7, -6.2);
+    const dockScalePeak = isMobile ? 2.0 : 2.6;
+    const dockWorldPos = new THREE.Vector3();
+    function computeAboutRaw(): number {
+      if (!aboutEl) return 0;
+      const r = aboutEl.getBoundingClientRect();
+      const viewCenter = window.innerHeight / 2;
+      const sectionCenter = (r.top + r.bottom) / 2;
+      const dist = Math.abs(sectionCenter - viewCenter);
+      const range = window.innerHeight * 0.85;
+      return Math.max(0, 1 - dist / range);
     }
 
     let rafId = 0;
     let disposed = false;
     let loopStarted = false;
     let smoothScroll = getScrollProgress();
+    let smoothAboutT = 0;
     let lastOpacity = -1;
 
     function startLoop() {
@@ -380,6 +419,15 @@ export default function OrbitalCore() {
         // em vez de pular a cada tick de scroll.
         smoothScroll += (getScrollProgress() - smoothScroll) * 0.07;
         const scrollProgress = smoothScroll;
+        smoothAboutT += (computeAboutRaw() - smoothAboutT) * 0.06;
+
+        // Câmera primeiro: o dock do C (abaixo) precisa da posição desse
+        // frame já resolvida pra converter o canto de tela em coordenada
+        // de mundo via camera.localToWorld.
+        const orbitAngle = nowSec * 0.01 + scrollProgress * Math.PI * 1.6;
+        updateCamera(orbitAngle, scrollProgress);
+        dockWorldPos.copy(DOCK_OFFSET);
+        camera.localToWorld(dockWorldPos);
 
         core.rotation.y += 0.0015;
         core.rotation.x += 0.0006;
@@ -425,6 +473,17 @@ export default function OrbitalCore() {
             const introScale = 1 + introEase * 2.4;
             scale = Math.max(scale, introScale);
           }
+
+          // Dock na seção Sobre: puxa o C da órbita pro canto da câmera,
+          // maior, e acende o halo — as outras formas nem sabem que isso
+          // existe, continuam orbitando normal.
+          if (s === cSat) {
+            s.mesh.position.lerp(dockWorldPos, smoothAboutT);
+            scale = scale + (dockScalePeak - scale) * smoothAboutT;
+            glowSizeAttr.array[0] = smoothAboutT * 130;
+            glowSizeAttr.needsUpdate = true;
+          }
+
           s.mesh.scale.setScalar(scale);
         }
         for (let ni = 0; ni < NODE_COUNT; ni++) {
@@ -441,8 +500,7 @@ export default function OrbitalCore() {
         }
         pulsePosAttr.needsUpdate = true;
 
-        const orbitAngle = nowSec * 0.010 + scrollProgress * Math.PI * 1.6;
-        renderFrame(orbitAngle, scrollProgress);
+        renderer.render(scene, camera);
 
         const nextOpacity = 1 - scrollProgress * 0.35;
         if (Math.abs(nextOpacity - lastOpacity) > 0.004 && canvas) {

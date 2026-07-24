@@ -1,6 +1,9 @@
-import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
+import { Outfit, Playfair_Display, JetBrains_Mono } from "next/font/google";
 
-export const inter = Inter({
+// Outfit no lugar de Inter: geometrica, mais "tech", combina com o visual
+// orbital 3D. Mantem a variavel --font-inter pra nao precisar tocar em quem
+// consome (globals.css, layout.tsx).
+export const inter = Outfit({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
