@@ -384,13 +384,13 @@ export default function OrbitalCore() {
     // Em telas estreitas (retrato) o frustum horizontal é bem menor — um
     // offset pensado pra desktop jogaria o C pra fora da tela.
     const DOCK_OFFSET = isMobile
-      ? new THREE.Vector3(0.5, -1.1, -4.2)
-      : new THREE.Vector3(1.0, -1.3, -5.0);
+      ? new THREE.Vector3(0.5, -0.75, -4.2)
+      : new THREE.Vector3(1.0, -0.9, -5.0);
     // Conta real de perspectiva (antes eu só chutava): diâmetro do C em
     // escala 1 é ~1.62 (2*(cRingRadius+cTubeRadius)). Altura visível do
     // mundo à distância D do DOCK_OFFSET.z é 2*D*tan(22.5°). Pra ocupar só
     // ~10% da altura da tela: scale = 0.10 * (2*D*tan(22.5°)) / 1.62.
-    const dockScalePeak = isMobile ? 0.22 : 0.28;
+    const dockScalePeak = isMobile ? 0.32 : 0.4;
     const dockWorldPos = new THREE.Vector3();
     function computeAboutRaw(): number {
       if (!aboutEl) return 0;
@@ -494,7 +494,10 @@ export default function OrbitalCore() {
             s.mesh.position.lerp(dockWorldPos, smoothAboutT);
             scale = scale + (dockScalePeak - scale) * smoothAboutT;
             const breathe = 1 + 0.28 * Math.sin(nowSec * 2.2);
-            const glowBase = isMobile ? 8 : 13;
+            // Halo precisa ficar MENOR que o C sólido (que agora tem
+            // diâmetro visível ~15% da altura da tela) — senão o brilho
+            // vira uma bolha borrada que esconde a forma em vez de realçar.
+            const glowBase = isMobile ? 6 : 9;
             glowSizeAttr.array[0] = smoothAboutT * glowBase * breathe;
             glowSizeAttr.needsUpdate = true;
           }
