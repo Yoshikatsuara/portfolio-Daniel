@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { onMotionEnabled } from "@/lib/motion";
 
 // Fundo 3D fixo da página inteira: icosaedro central + rede de nós em esfera
 // de Fibonacci + pulsos de sinal + sólidos wireframe orbitando. Desce e gira
@@ -35,9 +34,9 @@ export default function OrbitalCore() {
     const NODE_COUNT = isMobile ? 60 : 120;
     const NODE_RADIUS = 3.1;
 
-    const accent = new THREE.Color(0x3ddc97);
-    const accentSoft = new THREE.Color(0x9bffd0);
-    const signalColor = new THREE.Color(0xcffff0);
+    const accent = new THREE.Color(0xff5a00);
+    const accentSoft = new THREE.Color(0xffb380);
+    const signalColor = new THREE.Color(0xffe3cc);
 
     const glowVertex = [
       "attribute float aSize;",
@@ -72,12 +71,12 @@ export default function OrbitalCore() {
     const coreGeo = new THREE.IcosahedronGeometry(1.4, 1);
     const core = new THREE.LineSegments(
       new THREE.EdgesGeometry(coreGeo),
-      new THREE.LineBasicMaterial({ color: 0x3ddc97, transparent: true, opacity: 0.55 })
+      new THREE.LineBasicMaterial({ color: 0xff5a00, transparent: true, opacity: 0.55 })
     );
     scene.add(core);
     const coreFill = new THREE.Mesh(
       coreGeo,
-      new THREE.MeshBasicMaterial({ color: 0x3ddc97, transparent: true, opacity: 0.05, side: THREE.DoubleSide })
+      new THREE.MeshBasicMaterial({ color: 0xff5a00, transparent: true, opacity: 0.05, side: THREE.DoubleSide })
     );
     scene.add(coreFill);
 
@@ -156,7 +155,7 @@ export default function OrbitalCore() {
     scene.add(
       new THREE.LineSegments(
         edgeGeo,
-        new THREE.LineBasicMaterial({ color: 0x3ddc97, transparent: true, opacity: 0.16 })
+        new THREE.LineBasicMaterial({ color: 0xff5a00, transparent: true, opacity: 0.16 })
       )
     );
 
@@ -188,11 +187,11 @@ export default function OrbitalCore() {
     scene.add(new THREE.Points(pulseGeo, makeGlowMaterial()));
 
     const SHAPE_DEFS = [
-      { geo: "icosahedron", r: 0.38, radius: 4.8, incline: 0.5, speed: 0.16, tilt: 0.0, color: 0x3ddc97 },
-      { geo: "octahedron", r: 0.32, radius: 4.3, incline: 0.75, speed: -0.21, tilt: 1.4, color: 0x9bffd0 },
-      { geo: "tetrahedron", r: 0.36, radius: 4.6, incline: 0.55, speed: -0.18, tilt: 0.7, color: 0x9bffd0 },
-      { geo: "torus", r: 0.3, radius: 5.6, incline: 0.25, speed: 0.11, tilt: 3.6, color: 0x3ddc97 },
-      { geo: "box", r: 0.26, radius: 5.2, incline: 0.4, speed: 0.19, tilt: 4.1, color: 0x3ddc97 },
+      { geo: "icosahedron", r: 0.38, radius: 4.8, incline: 0.5, speed: 0.16, tilt: 0.0, color: 0xff5a00 },
+      { geo: "octahedron", r: 0.32, radius: 4.3, incline: 0.75, speed: -0.21, tilt: 1.4, color: 0xffb380 },
+      { geo: "tetrahedron", r: 0.36, radius: 4.6, incline: 0.55, speed: -0.18, tilt: 0.7, color: 0xffb380 },
+      { geo: "torus", r: 0.3, radius: 5.6, incline: 0.25, speed: 0.11, tilt: 3.6, color: 0xff5a00 },
+      { geo: "box", r: 0.26, radius: 5.2, incline: 0.4, speed: 0.19, tilt: 4.1, color: 0xff5a00 },
     ];
     function makeShapeGeometry(type: string, r: number): THREE.BufferGeometry {
       if (type === "icosahedron") return new THREE.IcosahedronGeometry(r, 0);
@@ -202,7 +201,7 @@ export default function OrbitalCore() {
       return new THREE.BoxGeometry(r * 1.3, r * 1.3, r * 1.3);
     }
     type Sat = {
-      mesh: THREE.LineSegments;
+      mesh: THREE.Object3D;
       angle: number;
       speed: number;
       radius: number;
@@ -220,13 +219,34 @@ export default function OrbitalCore() {
       return {
         mesh,
         angle: Math.random() * Math.PI * 2,
-        speed: def.speed * 0.016,
+        speed: def.speed * 0.011,
         radius: def.radius,
         incline: def.incline,
         tilt: def.tilt,
-        rotX: (Math.random() - 0.5) * 0.02,
-        rotY: (Math.random() - 0.5) * 0.025,
+        rotX: (Math.random() - 0.5) * 0.014,
+        rotY: (Math.random() - 0.5) * 0.018,
       };
+    });
+
+    // "C" da Cadastra em 3D: torus com abertura de 90 graus (gap virado pra
+    // direita), laranja solido, girando no proprio eixo enquanto orbita.
+    const cLogoGroup = new THREE.Group();
+    const cLogoMesh = new THREE.Mesh(
+      new THREE.TorusGeometry(0.62, 0.19, 16, 56, Math.PI * 1.5),
+      new THREE.MeshBasicMaterial({ color: 0xff5a00, transparent: true, opacity: 0.95 })
+    );
+    cLogoMesh.rotation.z = Math.PI * 0.25;
+    cLogoGroup.add(cLogoMesh);
+    scene.add(cLogoGroup);
+    satellites.push({
+      mesh: cLogoGroup,
+      angle: Math.random() * Math.PI * 2,
+      speed: 0.09 * 0.011,
+      radius: 4.0,
+      incline: 0.45,
+      tilt: 2.0,
+      rotX: 0,
+      rotY: 0.014,
     });
 
     function resize() {
@@ -301,8 +321,8 @@ export default function OrbitalCore() {
         smoothScroll += (getScrollProgress() - smoothScroll) * 0.07;
         const scrollProgress = smoothScroll;
 
-        core.rotation.y += 0.0022;
-        core.rotation.x += 0.0009;
+        core.rotation.y += 0.0015;
+        core.rotation.x += 0.0006;
         coreFill.rotation.copy(core.rotation);
         for (const s of satellites) {
           s.angle += s.speed;
@@ -324,7 +344,7 @@ export default function OrbitalCore() {
         }
         pulsePosAttr.needsUpdate = true;
 
-        const orbitAngle = nowSec * 0.018 + scrollProgress * Math.PI * 3.2;
+        const orbitAngle = nowSec * 0.010 + scrollProgress * Math.PI * 1.6;
         renderFrame(orbitAngle, scrollProgress);
 
         const nextOpacity = 1 - scrollProgress * 0.35;
@@ -337,12 +357,11 @@ export default function OrbitalCore() {
     }
 
     renderStatic();
-    const offMotion = onMotionEnabled(startLoop);
+    startLoop();
 
     return () => {
       disposed = true;
       cancelAnimationFrame(rafId);
-      offMotion();
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointerMove);
       scene.traverse((obj) => {

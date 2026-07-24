@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { onMotionEnabled } from "@/lib/motion";
 
 const LINES = [
   "daniel@ara:~$ ./customer_success --data-driven",
@@ -10,48 +9,43 @@ const LINES = [
 ];
 
 export default function Hero() {
-  // Com reduced-motion, mostra a primeira linha completa e parada.
-  const [typed, setTyped] = useState(LINES[0]);
+  const [typed, setTyped] = useState("");
 
   useEffect(() => {
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
 
-    const off = onMotionEnabled(() => {
-      let li = 0;
-      let ci = 0;
-      let deleting = false;
-      const tick = () => {
-        if (cancelled) return;
-        const line = LINES[li];
-        if (!deleting) {
-          ci += 1;
-          setTyped(line.slice(0, ci));
-          if (ci >= line.length) {
-            deleting = true;
-            timer = setTimeout(tick, 2400);
-            return;
-          }
-          timer = setTimeout(tick, 34 + Math.random() * 40);
-        } else {
-          ci -= 3;
-          if (ci <= 0) {
-            ci = 0;
-            deleting = false;
-            li = (li + 1) % LINES.length;
-          }
-          setTyped(line.slice(0, Math.max(ci, 0)));
-          timer = setTimeout(tick, 12);
+    let li = 0;
+    let ci = 0;
+    let deleting = false;
+    const tick = () => {
+      if (cancelled) return;
+      const line = LINES[li];
+      if (!deleting) {
+        ci += 1;
+        setTyped(line.slice(0, ci));
+        if (ci >= line.length) {
+          deleting = true;
+          timer = setTimeout(tick, 2400);
+          return;
         }
-      };
-      setTyped("");
-      tick();
-    });
+        timer = setTimeout(tick, 34 + Math.random() * 40);
+      } else {
+        ci -= 3;
+        if (ci <= 0) {
+          ci = 0;
+          deleting = false;
+          li = (li + 1) % LINES.length;
+        }
+        setTyped(line.slice(0, Math.max(ci, 0)));
+        timer = setTimeout(tick, 12);
+      }
+    };
+    tick();
 
     return () => {
       cancelled = true;
       if (timer) clearTimeout(timer);
-      off();
     };
   }, []);
 

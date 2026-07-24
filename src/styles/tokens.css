@@ -1,12 +1,12 @@
 :root {
-  --bg-primary:    #050A08;  /* Verde-preto CRT — background base */
-  --bg-surface:    #0C1611;  /* Cards e elevações */
-  --bg-elevated:   #08120D;  /* Gradientes, camadas intermediárias */
-  --border:        #1B2A22;  /* Bordas sutis */
-  --text-primary:  #E8F5EE;  /* Texto principal */
-  --text-secondary:#9DB8AA;  /* Texto secundário */
-  --text-muted:    #587265;  /* Captions, metadata */
-  --accent:        #3DDC97;  /* Verde-menta CRT — CTA, destaques */
-  --accent-soft:   #9BFFD0;  /* Variante clara do accent */
-  --accent-glow:   #3DDC9740;/* Glow do accent (40 = 25% opacidade) */
+  --bg-primary:    #0A0604;  /* Laranja-preto CRT — background base */
+  --bg-surface:    #171009;  /* Cards e elevações */
+  --bg-elevated:   #120C07;  /* Gradientes, camadas intermediárias */
+  --border:        #2B2118;  /* Bordas sutis */
+  --text-primary:  #F5EFE8;  /* Texto principal */
+  --text-secondary:#BDAE9D;  /* Texto secundário */
+  --text-muted:    #77685A;  /* Captions, metadata */
+  --accent:        #FF5A00;  /* Laranja Cadastra — CTA, destaques */
+  --accent-soft:   #FFB380;  /* Variante clara do accent */
+  --accent-glow:   #FF5A0040;/* Glow do accent (40 = 25% opacidade) */
 }

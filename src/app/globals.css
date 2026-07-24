@@ -65,40 +65,6 @@ body {
   transform: none;
 }
 
-/* ============ banner de reduced-motion ============ */
-.motion-banner {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
-  background: var(--bg-elevated);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 18px;
-  font-family: var(--mono-stack);
-  font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-.motion-banner button {
-  font-family: var(--mono-stack);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: var(--bg-primary);
-  background: var(--accent);
-  border: none;
-  border-radius: 999px;
-  padding: 9px 20px;
-  cursor: pointer;
-}
-.motion-banner button:hover {
-  background: var(--accent-soft);
-}
-
 /* ============ nav ============ */
 .home-nav {
   position: sticky;
@@ -123,7 +89,7 @@ body {
   font-size: 13px;
   letter-spacing: 0.14em;
   color: var(--accent);
-  text-shadow: 0 0 12px rgba(61, 220, 151, 0.5);
+  text-shadow: 0 0 12px rgba(255, 90, 0, 0.5);
 }
 .home-links {
   display: flex;
@@ -209,7 +175,7 @@ body {
   font-weight: 700;
   max-width: 16ch;
   margin: 0 0 24px;
-  text-shadow: 0 0 24px rgba(61, 220, 151, 0.25);
+  text-shadow: 0 0 24px rgba(255, 90, 0, 0.25);
 }
 .home-hero h1 .hl {
   color: var(--accent);
@@ -249,7 +215,7 @@ body {
   border-color: var(--accent);
 }
 .home-btn.primary:hover {
-  box-shadow: 0 0 24px rgba(61, 220, 151, 0.45);
+  box-shadow: 0 0 24px rgba(255, 90, 0, 0.45);
 }
 .home-btn:not(.primary):hover {
   border-color: var(--accent);
@@ -401,7 +367,7 @@ body {
 }
 .home-readout .v.hl {
   color: var(--accent);
-  text-shadow: 0 0 10px rgba(61, 220, 151, 0.4);
+  text-shadow: 0 0 10px rgba(255, 90, 0, 0.4);
 }
 
 /* ============ cases (carrossel automático) ============ */
@@ -507,7 +473,7 @@ body {
   bottom: 0;
   left: 0;
   width: 90px;
-  background: linear-gradient(90deg, transparent, rgba(61, 220, 151, 0.09), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 90, 0, 0.09), transparent);
   transform: translateX(-120px);
   animation: home-sweep 3.6s linear infinite;
   animation-delay: var(--d, 0s);
@@ -606,18 +572,4 @@ body {
   .home-band .cat { width: auto; }
 }
 
-/* ============ reduced-motion: pausa tudo; .force-motion religa ============ */
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
-  .home-ticker .track,
-  .home-strip,
-  .home-band::after,
-  .home-badge .dot,
-  .home-typeline .cursor { animation: none !important; }
-}
-body.force-motion .home-ticker .track { animation: home-scroll 28s linear infinite !important; }
-body.force-motion .home-strip { animation: home-cases 46s linear infinite !important; }
-body.force-motion .home-band::after { animation: home-sweep 3.6s linear infinite !important; animation-delay: var(--d, 0s) !important; }
-body.force-motion .home-badge .dot { animation: home-ping 2.2s ease-in-out infinite !important; }
-body.force-motion .home-typeline .cursor { animation: home-blink 0.9s steps(1) infinite !important; }
+/* Animações sempre ativas por decisão do dono do site (sem gate de reduced-motion). */

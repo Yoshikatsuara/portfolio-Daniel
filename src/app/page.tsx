@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { profile } from "@/content/profile";
-import MotionBanner from "@/components/ui/MotionBanner";
 import RevealInit from "@/components/ui/RevealInit";
 import OrbitalCore from "@/components/three/OrbitalCore";
 import Navbar from "@/components/ui/Navbar";
@@ -20,7 +19,6 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <MotionBanner />
       <OrbitalCore />
       <div className="home-scan-fixed" aria-hidden="true" />
       <RevealInit />
