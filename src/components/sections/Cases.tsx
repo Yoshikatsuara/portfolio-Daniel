@@ -124,7 +124,7 @@ export default function Cases() {
         </div>
       </div>
       <div className="home-strip-outer" ref={outerRef}>
-        <div className="home-strip">
+        <div className={`home-strip${expanded !== null ? " has-expanded" : ""}`}>
           {loop.map((item, i) => {
             const isExpanded = expanded === i;
             return (
