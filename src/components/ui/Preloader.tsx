@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 
-const TARGET = "DANIEL@ARA:~$";
+const TARGET = "DANIEL@DAMASCENO:~$";
 const GLYPHS = "#%&*+=-/<>01?$";
 const LOCK_MS = 460;
 const LINE_DELAY_MS = 150;
@@ -88,12 +88,8 @@ export default function Preloader() {
           ))}
         </div>
         <div className="preloader-status">{status}</div>
+        <div className={`preloader-line${lineGrowing ? " is-growing" : ""}`} />
       </div>
-      <div
-        className={`preloader-line${lineGrowing ? " is-growing" : ""}${
-          splitting ? " is-fading" : ""
-        }`}
-      />
     </div>
   );
 }

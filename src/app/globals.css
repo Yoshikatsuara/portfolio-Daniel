@@ -54,13 +54,20 @@ body {
 }
 
 /* ============ reveal-on-scroll ============ */
-.reveal {
+/* .reveal é controlado pelo RevealInit global (classList fora do React).
+   .local-reveal é a mesma animação, mas controlada por estado do próprio
+   componente — usar quando o elemento também tem outras classes que o
+   React reescreve a cada render (senão o React apaga o ".is-visible"
+   que o RevealInit adicionou por fora dele). */
+.reveal,
+.local-reveal {
   opacity: 0;
   transform: translateY(26px);
   transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   transition-delay: calc(var(--i, 0) * 80ms);
 }
-.reveal.is-visible {
+.reveal.is-visible,
+.local-reveal.is-visible {
   opacity: 1;
   transform: none;
 }
@@ -731,24 +738,15 @@ body {
   color: var(--text-muted);
 }
 .preloader-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
+  width: 140px;
   height: 2px;
-  margin-top: -1px;
+  margin-top: 24px;
   background: var(--accent);
   box-shadow: 0 0 16px var(--accent-glow);
   transform: scaleX(0);
-  opacity: 1;
-  z-index: 4;
-  transition: opacity 0.3s ease;
 }
 .preloader-line.is-growing {
   animation: preloaderLineGrow 0.55s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
-}
-.preloader-line.is-fading {
-  opacity: 0;
 }
 @keyframes preloaderLineGrow {
   to { transform: scaleX(1); }
