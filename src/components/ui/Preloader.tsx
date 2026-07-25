@@ -88,8 +88,12 @@ export default function Preloader() {
           ))}
         </div>
         <div className="preloader-status">{status}</div>
-        <div className={`preloader-line${lineGrowing ? " is-growing" : ""}`} />
       </div>
+      <div
+        className={`preloader-line${lineGrowing ? " is-growing" : ""}${
+          splitting ? " is-fading" : ""
+        }`}
+      />
     </div>
   );
 }
