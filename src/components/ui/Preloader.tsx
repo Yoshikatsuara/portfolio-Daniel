@@ -21,6 +21,13 @@ export default function Preloader() {
   const rafRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
+    // Sempre começa do topo — sem isso o navegador às vezes restaura a
+    // posição de scroll de antes do refresh, e a pessoa recarrega no meio
+    // da página em vez de ver o preloader/hero do início.
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
     document.body.style.overflow = "hidden";
     let cancelled = false;
     const timers: ReturnType<typeof setTimeout>[] = [];

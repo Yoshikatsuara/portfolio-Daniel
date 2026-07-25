@@ -535,17 +535,7 @@ export default function OrbitalCore() {
           // criando aquela mancha grande. Isolado, só o dock controla o C.
           const isDocking = s === cSat && smoothAboutT > 0.02;
 
-          // Giro de abertura só do C: nos primeiros ~2.6s, gira bem mais
-          // rápido (efeito de "chegando perto") e desacelera até o ritmo
-          // normal — puramente de rotação, não mexe na órbita nem na câmera.
-          let rotYThisFrame = s.rotY;
-          if (s === cSat && !isDocking) {
-            const introDuration = 2.6;
-            if (nowSec < introDuration) {
-              const introT = 1 - nowSec / introDuration;
-              rotYThisFrame += introT * introT * 0.16;
-            }
-          }
+          const rotYThisFrame = s.rotY;
           s.mesh.rotation.x += s.rotX;
           s.mesh.rotation.y += rotYThisFrame;
 
@@ -564,14 +554,6 @@ export default function OrbitalCore() {
                   ? Math.sin((localT / riseFrac) * Math.PI * 0.5)
                   : Math.cos(((localT - riseFrac) / (1 - riseFrac)) * Math.PI * 0.5);
               scale = 1 + bump * (s.peakScale - 1);
-            }
-            // O C também "chega de perto" nos primeiros ~2.6s: começa grande
-            // e desacelera até o tamanho normal, por cima do zoom periódico.
-            if (s === cSat && nowSec < 2.6) {
-              const introT = 1 - nowSec / 2.6;
-              const introEase = introT * introT * introT;
-              const introScale = 1 + introEase * 2.4;
-              scale = Math.max(scale, introScale);
             }
           }
 
