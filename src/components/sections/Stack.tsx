@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { stack } from "@/content/stack";
+import { skillIcons } from "@/content/skillIcons";
 
 // Mesmo padrão de foco do carrossel de Cases: clicar numa categoria a
 // destaca (cresce, ganha borda/sombra) e escurece as outras, até fechar.
@@ -86,9 +87,15 @@ export default function Stack() {
                 )}
                 <span className="cat">{group.category}</span>
                 <div className="items">
-                  {group.items.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
+                  {group.items.map((item) => {
+                    const icon = skillIcons[item];
+                    return (
+                      <span key={item}>
+                        {isExpanded && icon && <span className="skill-icon">{icon}</span>}
+                        {item}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
             );

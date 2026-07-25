@@ -144,6 +144,34 @@ body {
   position: relative;
   min-height: 660px;
   overflow: hidden;
+  cursor: grab;
+}
+.home-orbit-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  font-family: var(--mono-stack);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--accent-soft);
+  background: color-mix(in srgb, var(--bg-elevated) 85%, transparent);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 9px 16px;
+}
+.home-orbit-hint .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  flex: none;
+  animation: orbitHintPing 1.6s ease-in-out infinite;
+}
+@keyframes orbitHintPing {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 .home-hero-copy {
   position: relative;
@@ -539,8 +567,12 @@ body {
   transform: translateY(-3px);
 }
 .home-band.is-expanded .items span {
-  font-size: 13px;
-  padding: 6px 13px;
+  font-size: 14.5px;
+  padding: 9px 16px;
+}
+.home-band.is-expanded .items .skill-icon svg {
+  width: 30px;
+  height: 30px;
 }
 .home-band-close {
   position: absolute;
@@ -597,6 +629,9 @@ body {
   flex-wrap: wrap;
 }
 .home-band .items span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-family: var(--mono-stack);
   font-size: 11.5px;
   color: var(--text-secondary);
@@ -604,6 +639,16 @@ body {
   border-radius: 3px;
   padding: 4px 11px;
   transition: font-size 0.3s ease, padding 0.3s ease;
+}
+.home-band .items .skill-icon {
+  flex: none;
+  display: inline-flex;
+}
+.home-band .items .skill-icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  flex: none;
 }
 
 /* ============ contato ============ */
@@ -869,6 +914,10 @@ body {
   .home-hero-copy { padding: 56px 20px 44px; }
   .home-hero h1 { max-width: 12ch; }
   .home-hero .sub { font-size: 14.5px; }
+  .home-orbit-hint {
+    font-size: 10.5px;
+    padding: 8px 13px;
+  }
   .home-section { padding: 56px 0; }
   .home-wrap { padding: 0 20px; }
   .home-section-lead { margin-top: -12px; }

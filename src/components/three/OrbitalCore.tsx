@@ -345,6 +345,79 @@ export default function OrbitalCore() {
     }
     window.addEventListener("pointermove", onPointerMove);
 
+    // Modo interativo: clicar no herói (evento disparado pelo Hero.tsx)
+    // congela a rotação automática da câmera e passa o controle pro
+    // arrasto do usuário — gira tipo um spinner: arrastar dá velocidade,
+    // soltar deixa girando sozinho e vai desacelerando aos poucos (não
+    // trava girando pra sempre, nem para na hora ao soltar).
+    let interactiveMode = false;
+    let autoAngleFrozen = 0;
+    let userAngleOffset = 0;
+    let angularVelocity = 0;
+    let dragging = false;
+    let lastDragX = 0;
+    let lastDragTime = 0;
+    function onOrbitalActivate() {
+      if (interactiveMode) return;
+      interactiveMode = true;
+      autoAngleFrozen = performance.now() * 0.001 * 0.01;
+    }
+    function onDragStart(ev: PointerEvent) {
+      if (!interactiveMode) return;
+      dragging = true;
+      angularVelocity = 0;
+      lastDragX = ev.clientX;
+      lastDragTime = performance.now();
+    }
+    function onDragMove(ev: PointerEvent) {
+      if (!dragging) return;
+      const now = performance.now();
+      const dt = Math.max(1, now - lastDragTime);
+      const dx = ev.clientX - lastDragX;
+      userAngleOffset += dx * 0.006;
+      // velocidade normalizada pra "por frame de ~16ms", pra desacelerar
+      // igual independente da taxa de atualização do pointermove.
+      angularVelocity = dx * 0.006 * (16 / dt);
+      lastDragX = ev.clientX;
+      lastDragTime = now;
+    }
+    function onDragEnd() {
+      dragging = false;
+    }
+    window.addEventListener("orbitalActivate", onOrbitalActivate);
+    window.addEventListener("pointerdown", onDragStart);
+    window.addEventListener("pointermove", onDragMove);
+    window.addEventListener("pointerup", onDragEnd);
+
+    // Animação de entrada do C: em vez de só acontecer quando o usuário
+    // rola até "Sobre", também dispara sozinha assim que o preloader
+    // termina — reaproveita o mesmo docking (dá zoom, vai pro canto,
+    // brilha) e depois solta, voltando o C pra órbita normal.
+    const INTRO_DOCK_RISE = 0.5;
+    const INTRO_DOCK_HOLD = 1.6;
+    const INTRO_DOCK_FALL = 1.1;
+    let introDockStart: number | null = null;
+    function onPreloaderComplete() {
+      introDockStart = performance.now() * 0.001;
+    }
+    window.addEventListener("preloaderComplete", onPreloaderComplete);
+    function computeIntroDockT(nowSec: number): number {
+      if (introDockStart === null) return 0;
+      const t = nowSec - introDockStart;
+      if (t < 0) return 0;
+      if (t < INTRO_DOCK_RISE) {
+        const e = t / INTRO_DOCK_RISE;
+        return 1 - (1 - e) * (1 - e);
+      }
+      if (t < INTRO_DOCK_RISE + INTRO_DOCK_HOLD) return 1;
+      const fallT = (t - INTRO_DOCK_RISE - INTRO_DOCK_HOLD) / INTRO_DOCK_FALL;
+      if (fallT >= 1) {
+        introDockStart = null;
+        return 0;
+      }
+      return 1 - fallT * fallT;
+    }
+
     function getScrollProgress(): number {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       if (max <= 0) return 0;
@@ -427,12 +500,24 @@ export default function OrbitalCore() {
         // em vez de pular a cada tick de scroll.
         smoothScroll += (getScrollProgress() - smoothScroll) * 0.07;
         const scrollProgress = smoothScroll;
-        smoothAboutT += (computeAboutRaw() - smoothAboutT) * 0.06;
+        const aboutTarget = Math.max(computeAboutRaw(), computeIntroDockT(nowSec));
+        smoothAboutT += (aboutTarget - smoothAboutT) * 0.06;
+
+        // Efeito "spinner": enquanto não está sendo arrastado, a velocidade
+        // que sobrou do último gesto continua girando o sistema sozinha e
+        // vai freando aos poucos (fricção), em vez de travar parado assim
+        // que solta o botão ou ficar girando pra sempre.
+        if (!dragging && angularVelocity !== 0) {
+          userAngleOffset += angularVelocity;
+          angularVelocity *= 0.985;
+          if (Math.abs(angularVelocity) < 0.00005) angularVelocity = 0;
+        }
 
         // Câmera primeiro: o dock do C (abaixo) precisa da posição desse
         // frame já resolvida pra converter o canto de tela em coordenada
         // de mundo via camera.localToWorld.
-        const orbitAngle = nowSec * 0.01 + scrollProgress * Math.PI * 1.6;
+        const autoAngle = interactiveMode ? autoAngleFrozen : nowSec * 0.01;
+        const orbitAngle = autoAngle + scrollProgress * Math.PI * 1.6 + userAngleOffset;
         updateCamera(orbitAngle, scrollProgress);
         dockWorldPos.copy(DOCK_OFFSET);
         camera.localToWorld(dockWorldPos);
@@ -531,6 +616,7 @@ export default function OrbitalCore() {
           canvas.style.opacity = String(nextOpacity);
           lastOpacity = nextOpacity;
         }
+
       };
       tick();
     }
@@ -543,6 +629,11 @@ export default function OrbitalCore() {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("orbitalActivate", onOrbitalActivate);
+      window.removeEventListener("pointerdown", onDragStart);
+      window.removeEventListener("pointermove", onDragMove);
+      window.removeEventListener("pointerup", onDragEnd);
+      window.removeEventListener("preloaderComplete", onPreloaderComplete);
       scene.traverse((obj) => {
         const o = obj as unknown as {
           geometry?: { dispose?: () => void };

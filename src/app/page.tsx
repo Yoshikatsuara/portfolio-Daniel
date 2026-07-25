@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { profile } from "@/content/profile";
 import RevealInit from "@/components/ui/RevealInit";
+import SmoothAnchors from "@/components/ui/SmoothAnchors";
 import OrbitalCore from "@/components/three/OrbitalCore";
 import Preloader from "@/components/ui/Preloader";
 import MobilePopup from "@/components/ui/MobilePopup";
@@ -26,6 +27,7 @@ export default function Home() {
       <OrbitalCore />
       <div className="home-scan-fixed" aria-hidden="true" />
       <RevealInit />
+      <SmoothAnchors />
       <Navbar />
       <main className="min-h-screen">
         <Hero />

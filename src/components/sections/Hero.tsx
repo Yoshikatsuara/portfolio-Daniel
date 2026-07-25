@@ -10,6 +10,18 @@ const LINES = [
 
 export default function Hero() {
   const [typed, setTyped] = useState("");
+  const [showOrbitHint, setShowOrbitHint] = useState(true);
+
+  useEffect(() => {
+    const hero = document.getElementById("hero");
+    if (!hero) return;
+    function activateOrbit() {
+      window.dispatchEvent(new Event("orbitalActivate"));
+      setShowOrbitHint(false);
+    }
+    hero.addEventListener("click", activateOrbit);
+    return () => hero.removeEventListener("click", activateOrbit);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,6 +84,11 @@ export default function Hero() {
             Falar comigo
           </a>
         </div>
+        {showOrbitHint && (
+          <div className="home-orbit-hint" aria-hidden="true">
+            <span className="dot" /> clique e arraste em qualquer lugar aqui pra girar o sistema 3D
+          </div>
+        )}
       </div>
     </section>
   );
