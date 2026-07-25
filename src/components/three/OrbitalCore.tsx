@@ -389,33 +389,37 @@ export default function OrbitalCore() {
     window.addEventListener("pointermove", onDragMove);
     window.addEventListener("pointerup", onDragEnd);
 
-    // Animação de entrada do C: em vez de só acontecer quando o usuário
-    // rola até "Sobre", também dispara sozinha assim que o preloader
-    // termina — reaproveita o mesmo docking (dá zoom, vai pro canto,
-    // brilha) e depois solta, voltando o C pra órbita normal.
-    const INTRO_DOCK_RISE = 0.5;
-    const INTRO_DOCK_HOLD = 1.6;
-    const INTRO_DOCK_FALL = 1.1;
-    let introDockStart: number | null = null;
+    // Animação de entrada do C: assim que o preloader termina, dá um zoom
+    // grande NO LUGAR onde o C já estiver orbitando (sem puxar ele pra
+    // nenhum canto — só escala, não mexe em posição) e volta ao tamanho
+    // normal, tudo nos primeiros ~2s. Totalmente separado do dock da seção
+    // "Sobre" (que continua só ligado ao scroll).
+    const INTRO_ZOOM_RISE = 0.35;
+    const INTRO_ZOOM_HOLD = 0.5;
+    const INTRO_ZOOM_FALL = 1.0;
+    const INTRO_ZOOM_PEAK = 3.2;
+    let introZoomStart: number | null = null;
     function onPreloaderComplete() {
-      introDockStart = performance.now() * 0.001;
+      introZoomStart = performance.now() * 0.001;
     }
     window.addEventListener("preloaderComplete", onPreloaderComplete);
-    function computeIntroDockT(nowSec: number): number {
-      if (introDockStart === null) return 0;
-      const t = nowSec - introDockStart;
-      if (t < 0) return 0;
-      if (t < INTRO_DOCK_RISE) {
-        const e = t / INTRO_DOCK_RISE;
-        return 1 - (1 - e) * (1 - e);
+    function computeIntroZoom(nowSec: number): number {
+      if (introZoomStart === null) return 1;
+      const t = nowSec - introZoomStart;
+      if (t < 0) return 1;
+      if (t < INTRO_ZOOM_RISE) {
+        const e = t / INTRO_ZOOM_RISE;
+        const eased = 1 - (1 - e) * (1 - e);
+        return 1 + eased * (INTRO_ZOOM_PEAK - 1);
       }
-      if (t < INTRO_DOCK_RISE + INTRO_DOCK_HOLD) return 1;
-      const fallT = (t - INTRO_DOCK_RISE - INTRO_DOCK_HOLD) / INTRO_DOCK_FALL;
+      if (t < INTRO_ZOOM_RISE + INTRO_ZOOM_HOLD) return INTRO_ZOOM_PEAK;
+      const fallT = (t - INTRO_ZOOM_RISE - INTRO_ZOOM_HOLD) / INTRO_ZOOM_FALL;
       if (fallT >= 1) {
-        introDockStart = null;
-        return 0;
+        introZoomStart = null;
+        return 1;
       }
-      return 1 - fallT * fallT;
+      const eased = 1 - fallT * fallT;
+      return 1 + eased * (INTRO_ZOOM_PEAK - 1);
     }
 
     function getScrollProgress(): number {
@@ -500,8 +504,7 @@ export default function OrbitalCore() {
         // em vez de pular a cada tick de scroll.
         smoothScroll += (getScrollProgress() - smoothScroll) * 0.07;
         const scrollProgress = smoothScroll;
-        const aboutTarget = Math.max(computeAboutRaw(), computeIntroDockT(nowSec));
-        smoothAboutT += (aboutTarget - smoothAboutT) * 0.06;
+        smoothAboutT += (computeAboutRaw() - smoothAboutT) * 0.06;
 
         // Efeito "spinner": enquanto não está sendo arrastado, a velocidade
         // que sobrou do último gesto continua girando o sistema sozinha e
@@ -571,6 +574,11 @@ export default function OrbitalCore() {
             const glowBase = isMobile ? 6 : 9;
             glowSizeAttr.array[0] = smoothAboutT * glowBase * breathe;
             glowSizeAttr.needsUpdate = true;
+
+            // Zoom de entrada: multiplica a escala por cima de tudo, sem
+            // tocar em posição — o C infla e desincha no lugar onde já
+            // está orbitando, não viaja pra canto nenhum.
+            scale *= computeIntroZoom(nowSec);
           }
 
           s.mesh.scale.setScalar(scale);
