@@ -518,6 +518,44 @@ body {
   border-radius: 6px;
   padding: 16px 22px;
   background: var(--bg-surface);
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+}
+.home-bands.has-expanded .home-band:not(.is-expanded) {
+  opacity: 0.22;
+}
+.home-band.is-expanded {
+  border-color: var(--accent);
+  padding: 26px 28px;
+  box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--accent);
+  z-index: 10;
+  transform: translateY(-3px);
+}
+.home-band.is-expanded .items span {
+  font-size: 13px;
+  padding: 6px 13px;
+}
+.home-band-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+}
+.home-band-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .home-band::after {
   content: "";
@@ -558,6 +596,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 3px;
   padding: 4px 11px;
+  transition: font-size 0.3s ease, padding 0.3s ease;
 }
 
 /* ============ contato ============ */
