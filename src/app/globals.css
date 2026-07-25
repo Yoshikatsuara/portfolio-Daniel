@@ -405,19 +405,52 @@ body {
   display: flex;
   gap: 16px;
   width: max-content;
-  padding: 0 32px;
+  padding: 20px 32px;
 }
 .home-case {
   width: 420px;
   flex: none;
+  position: relative;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--bg-surface);
   padding: 24px 26px;
-  transition: border-color 0.25s;
+  cursor: pointer;
+  transition: border-color 0.25s, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
 }
 .home-case:hover {
   border-color: var(--accent);
+}
+.home-case.is-expanded {
+  transform: scale(1.08);
+  border-color: var(--accent);
+  box-shadow: 0 24px 60px -16px rgba(0, 0, 0, 0.55);
+  z-index: 5;
+}
+.home-case.is-expanded .desc {
+  font-size: 13.5px;
+  line-height: 1.8;
+}
+.home-case-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.home-case-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 .home-case .client {
   font-family: var(--mono-stack);
