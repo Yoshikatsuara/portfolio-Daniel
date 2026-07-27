@@ -554,7 +554,9 @@ body {
   padding: 16px 22px;
   background: var(--bg-surface);
   cursor: pointer;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease,
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i, 0) * 80ms),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--i, 0) * 80ms);
 }
 .home-bands.has-expanded .home-band:not(.is-expanded) {
   opacity: 0.22;
